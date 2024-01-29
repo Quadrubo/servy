@@ -1,0 +1,11 @@
+---
+- name: System configuration for Servy
+  hosts: all
+  become: true
+
+  roles:
+    - role: system
+
+    - role: geerlingguy.pip
+
+    - role: geerlingguy.docker

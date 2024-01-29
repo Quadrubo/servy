@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "**/roles/**/*.yml": "ansible",   
-    }
+        "**/roles/system/tasks/**/*.yml": "ansible",   
+        "run.yml": "ansible",
+    },
+    "ansible.python.interpreterPath": "/bin/python3",
 }

@@ -1,9 +1,9 @@
-username: ansible
+system_username: ansible
 
-password: password
+system_password: password
 
-shell: /bin/bash
+system_shell: /bin/bash
 
-packages:
+system_packages:
   - neofetch
   - htop

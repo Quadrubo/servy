@@ -1,9 +1,10 @@
 - name: Update packages
-  apt:
-    update_cache: yes
-    upgrade: yes
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: true
 
 - name: Install essential packages
-  package:
-    name: "{{ packages }}"
+  ansible.builtin.package:
+    name: "{{ system_packages }}"
     state: latest
+    only_upgrade: true

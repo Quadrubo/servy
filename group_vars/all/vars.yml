@@ -1,7 +1,9 @@
-username: ansible
+system_username: ansible
 
-shell: /usr/bin/bash
+system_shell: /usr/bin/bash
 
-packages:
+system_packages:
   - htop
   - neofetch
+
+docker_add_repo: true
