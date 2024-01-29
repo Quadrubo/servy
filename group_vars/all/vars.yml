@@ -1,0 +1,7 @@
+username: ansible
+
+shell: /usr/bin/bash
+
+packages:
+  - htop
+  - neofetch
