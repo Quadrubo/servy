@@ -7,3 +7,6 @@ system_packages:
   - neofetch
 
 docker_add_repo: true
+
+pip_install_packages:
+  - name: docker

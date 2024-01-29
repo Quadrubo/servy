@@ -9,3 +9,5 @@
     - role: geerlingguy.pip
 
     - role: geerlingguy.docker
+
+    - role: docker

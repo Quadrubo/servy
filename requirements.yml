@@ -1,2 +1,7 @@
 roles:
   - name: geerlingguy.docker
+  - name: geerlingguy.pip
+
+collections:
+  - name: community.docker
+    version: ">=3.7.0"
