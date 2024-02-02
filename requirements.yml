@@ -1,6 +1,7 @@
 roles:
   - name: geerlingguy.docker
   - name: geerlingguy.pip
+  - name: tigattack.mergerfs
 
 collections:
   - name: community.docker

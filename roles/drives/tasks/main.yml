@@ -1,0 +1,7 @@
+- name: Mock drives
+  ansible.builtin.copy:
+    src: data/drives/
+    dest: /mnt
+    mode: "0644"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"

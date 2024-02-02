@@ -6,6 +6,10 @@
   roles:
     - role: system
 
+    - role: drives
+
+    - role: tigattack.mergerfs
+
     - role: geerlingguy.pip
 
     - role: geerlingguy.docker

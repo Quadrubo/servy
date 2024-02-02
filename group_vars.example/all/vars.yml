@@ -1,0 +1,52 @@
+# system configuration
+system_username: ansible
+
+system_shell: /usr/bin/bash
+
+system_packages:
+  - neofetch
+  - htop
+
+# docker configuration
+docker_networks:
+  - dockge
+  - jellyfin
+  - hemmelig
+  - actual-server
+  - arr
+
+docker_containers:
+  - dockge
+  - jellyfin
+  - hemmelig
+  - actual-server
+  - arr
+  - traefik
+
+docker_hostname: example.com
+docker_l_hostname: l.example.com
+docker_r_hostname: r.example.com
+
+docker_uid: 1000
+docker_gid: 1000
+
+docker_data_folders:
+  - /mnt/storage/containers/dockge/data
+  - /mnt/storage/containers/hemmelig/data
+  - /mnt/storage/containers/hemmelig/database
+  - /mnt/storage/containers/jellyfin/cache
+  - /mnt/storage/containers/jellyfin/config
+
+# docker extension configuration
+docker_add_repo: true
+
+# pip extension configuration
+pip_install_packages:
+  - name: docker
+
+# mergerfs extension configuration
+mergerfs_mounts:
+  - path: /mnt/storage
+    branches:
+      - /mnt/parity1
+      - /mnt/disk1

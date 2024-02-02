@@ -1,0 +1,13 @@
+# traefik
+traefik_cf_dns_api_token: "xxx"
+
+# hemmelig 
+hemmelig_secret_jwt_secret: "xxx" # can not include $
+
+# actual-server
+actual-server_actual_nordigen_secret_id: "xxx"
+actual-server_actual_nordigen_secret_key: "xxx"
+
+# gluetun
+gluetun_wireguard_private_key: "xxx"
+gluetun_wireguard_addresses: "xxx"

@@ -1,2 +1,4 @@
 .ssh/*
 !.ssh/.gitkeep
+containers_tmp
+group_vars

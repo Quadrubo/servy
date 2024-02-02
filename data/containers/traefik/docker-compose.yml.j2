@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # redirect to https
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # Let's Encrypt
+      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.myresolver.acme.email=ssl@julweb.dev"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    environment:
+      - "CF_DNS_API_TOKEN={{ traefik_cf_dns_api_token }}"
+    networks:
+      - net-dockge
+      - net-jellyfin
+      - net-hemmelig
+      - net-actual-server
+      - net-arr
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/mnt/storage/containers/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+networks:
+  net-dockge:
+    name: dockge
+    external: true
+
+  net-jellyfin:
+    name: jellyfin
+    external: true
+
+  net-hemmelig:
+    name: hemmelig
+    external: true
+
+  net-actual-server:
+    name: actual-server
+    external: true
+
+  net-arr:
+    name: arr
+    external: true

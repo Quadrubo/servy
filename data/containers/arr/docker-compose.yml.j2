@@ -1,0 +1,100 @@
+version: '3.8'
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun # necessary for other containers to connect
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8888:8888/tcp
+      - 8388:8388/tcp
+      - 8388:8388/udp
+      - 8787:8787 # readarr
+      - 6790:8080 # sabnzbd
+    volumes:
+      - /mnt/storage/containers/gluetun:/gluetun
+    environment:
+      - TZ=Europe/Berlin
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY={{ gluetun_wireguard_private_key }}
+      - WIREGUARD_ADDRESSES={{ gluetun_wireguard_addresses }}
+      - SERVER_CITIES=Madrid
+    networks:
+      - net-arr
+    labels:
+      - "traefik.enable=true"
+
+      # sabnzbd
+      - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.{{ docker_l_hostname }}`)"
+      - "traefik.http.services.sabnzbd.loadbalancer.server.port=8080"
+      - "traefik.http.routers.sabnzbd.service=sabnzbd"
+      - "traefik.http.routers.sabnzbd.entrypoints=websecure"
+      - "traefik.http.routers.sabnzbd.tls.certresolver=myresolver"
+
+      # readarr
+      - "traefik.http.routers.readarr.rule=Host(`readarr.{{ docker_l_hostname }}`)"
+      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+      - "traefik.http.routers.readarr.service=readarr"
+      - "traefik.http.routers.readarr.entrypoints=websecure"
+      - "traefik.http.routers.readarr.tls.certresolver=myresolver"
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/sabnzbd/config:/config
+      - /mnt/storage/arr/usenet:/arr/usenet #  https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+    # ports:
+    #   - 8080:8080
+    restart: unless-stopped
+    network_mode: container:gluetun
+    depends_on:
+      - gluetun
+
+    # modify the settings
+    # folders -> completed download folder = /arr/usenet
+    # folders -> incomplete download folder = /arr/usenet-incomplete
+    # categories
+    # - movies
+    # - tv
+    # - software
+    # - books
+    # - comics
+    # - audio
+    
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/readarr/config/:/config
+      - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+    # ports:
+    #   - 8787:8787
+    restart: unless-stopped
+    network_mode: container:gluetun
+    depends_on:
+      - gluetun
+
+    # modify the settings
+    # media management -> root folder 
+    # name: books
+    # path: /arr/media
+
+    # download clients -> sabnzbd
+    # category: books
+
+networks:
+  net-arr:
+    name: arr
+    external: true

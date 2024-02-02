@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  dockge:
+    image: louislam/dockge:1
+    restart: unless-stopped
+    ports:
+      - 5001:5001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/storage/containers/dockge/data:/app/data
+      - /srv/containers:/srv/containers
+    environment:
+      - DOCKGE_STACKS_DIR=/srv/containers
+    networks:
+      - net-dockge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dockge.rule=Host(`dockge.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.dockge.entrypoints=websecure"
+      - "traefik.http.routers.dockge.tls.certresolver=myresolver"
+
+networks:
+  net-dockge:
+    name: dockge
+    external: true
