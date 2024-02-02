@@ -11,8 +11,10 @@ services:
       - 8888:8888/tcp
       - 8388:8388/tcp
       - 8388:8388/udp
-      - 8787:8787 # readarr
       - 6790:8080 # sabnzbd
+      - 7878:7878 # radarr
+      - 8989:8989 # sonarr
+      - 8787:8787 # readarr
     volumes:
       - /mnt/storage/containers/gluetun:/gluetun
     environment:
@@ -34,12 +36,33 @@ services:
       - "traefik.http.routers.sabnzbd.entrypoints=websecure"
       - "traefik.http.routers.sabnzbd.tls.certresolver=myresolver"
 
+      # radarr
+      - "traefik.http.routers.radarr.rule=Host(`radarr.{{ docker_l_hostname }}`)"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.http.routers.radarr.service=radarr"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - "traefik.http.routers.radarr.tls.certresolver=myresolver"
+
+      # sonarr
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.{{ docker_l_hostname }}`)"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.http.routers.sonarr.service=sonarr"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.tls.certresolver=myresolver"
+
       # readarr
       - "traefik.http.routers.readarr.rule=Host(`readarr.{{ docker_l_hostname }}`)"
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
       - "traefik.http.routers.readarr.service=readarr"
       - "traefik.http.routers.readarr.entrypoints=websecure"
       - "traefik.http.routers.readarr.tls.certresolver=myresolver"
+
+      # kapowarr
+      - "traefik.http.routers.kapowarr.rule=Host(`kapowarr.{{ docker_l_hostname }}`)"
+      - "traefik.http.services.kapowarr.loadbalancer.server.port=5656"
+      - "traefik.http.routers.kapowarr.service=kapowarr"
+      - "traefik.http.routers.kapowarr.entrypoints=websecure"
+      - "traefik.http.routers.kapowarr.tls.certresolver=myresolver"
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
@@ -68,7 +91,57 @@ services:
     # - books
     # - comics
     # - audio
-    
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/radarr/config/:/config
+      - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+    # ports:
+    #   - 7878
+    restart: unless-stopped
+    network_mode: container:gluetun
+    depends_on:
+      - gluetun
+
+    # modify the settings
+    # media management -> root folder 
+    # name: movies
+    # path: /arr/media
+
+    # download clients -> sabnzbd
+    # category: movies
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/sonarr/config/:/config
+      - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+    # ports:
+    #   - 8989
+    restart: unless-stopped
+    network_mode: container:gluetun
+    depends_on:
+      - gluetun
+
+    # modify the settings
+    # media management -> root folder 
+    # name: tv
+    # path: /arr/media
+
+    # download clients -> sabnzbd
+    # category: tv
+
   readarr:
     image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
@@ -93,6 +166,34 @@ services:
 
     # download clients -> sabnzbd
     # category: books
+
+  kapowarr:
+    image: mrcas/kapowarr:latest
+    container_name: kapowarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/kapowarr/db:/app/db
+      - /mnt/storage/arr/usenet:/app/temp_downloads
+      - /mnt/storage/arr/media/comics:/comics-1
+      # - /mnt/storage/containers/kapowarr/config/:/config
+      # - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+    # ports:
+    #   - 8787:8787
+    restart: unless-stopped
+    network_mode: container:gluetun
+    depends_on:
+      - gluetun
+
+    # modify the settings
+    # media management -> root folder 
+    # name: comics
+    # path: /arr/media
+
+    # download clients -> sabnzbd
+    # category: comics
 
 networks:
   net-arr:
