@@ -1,3 +1,39 @@
+- name: Check if proxmox enterprise repository is enabled
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/pve-enterprise.list
+  register: proxmox_enterprise
+
+- name: Disable Proxmox Enterprise Repository
+  ansible.builtin.command: mv /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
+  when: proxmox_enterprise.stat.exists
+  changed_when: true
+
+- name: Ensure proxmox no-subscription repository is enabled
+  ansible.builtin.copy:
+    src: data/apt/sources.list.d/pve-no-subscription.list
+    dest: /etc/apt/sources.list.d/pve-no-subscription.list
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
+- name: Check if ceph enterprise repository is enabled
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/ceph.list
+  register: ceph_enterprise
+
+- name: Disable Ceph Enterprise Repository
+  ansible.builtin.command: mv /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+  when: proxmox_enterprise.stat.exists
+  changed_when: true
+
+- name: Ensure ceph no-subscription repository is enabled
+  ansible.builtin.copy:
+    src: data/apt/sources.list.d/ceph-no-subscription.list
+    dest: /etc/apt/sources.list.d/ceph-no-subscription.list
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
 - name: Update packages
   ansible.builtin.apt:
     update_cache: true
@@ -7,4 +43,3 @@
   ansible.builtin.package:
     name: "{{ system_packages }}"
     state: latest
-    only_upgrade: true

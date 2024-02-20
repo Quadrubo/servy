@@ -6,12 +6,14 @@
   roles:
     - role: system
 
-    - role: drives
+    - role: ssh
 
-    - role: tigattack.mergerfs
+    # - role: drives
 
-    - role: geerlingguy.pip
+    # - role: tigattack.mergerfs
 
-    - role: geerlingguy.docker
+    # - role: geerlingguy.pip
 
-    - role: docker
+    # - role: geerlingguy.docker
+
+    # - role: docker
