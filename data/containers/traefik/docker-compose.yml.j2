@@ -23,10 +23,10 @@ services:
       - "CF_DNS_API_TOKEN={{ traefik_cf_dns_api_token }}"
     networks:
       - net-dockge
-      - net-jellyfin
-      - net-hemmelig
-      - net-actual-server
-      - net-arr
+      # - net-jellyfin
+      # - net-hemmelig
+      # - net-actual-server
+      # - net-arr
     ports:
       - "80:80"
       - "443:443"
@@ -40,18 +40,18 @@ networks:
     name: dockge
     external: true
 
-  net-jellyfin:
-    name: jellyfin
-    external: true
+  # net-jellyfin:
+  #   name: jellyfin
+  #   external: true
 
-  net-hemmelig:
-    name: hemmelig
-    external: true
+  # net-hemmelig:
+  #   name: hemmelig
+  #   external: true
 
-  net-actual-server:
-    name: actual-server
-    external: true
+  # net-actual-server:
+  #   name: actual-server
+  #   external: true
 
-  net-arr:
-    name: arr
-    external: true
+  # net-arr:
+  #   name: arr
+  #   external: true

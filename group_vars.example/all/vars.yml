@@ -1,3 +1,30 @@
+# user configuration
+system_users:
+  - name: ansible
+    password: password
+    groups:
+      - sudo
+      - docker
+      - users
+    shell: /bin/bash
+    passwordless_sudo: true
+  - name: julian
+    password: password
+    groups:
+      - sudo
+      - docker
+      - users
+    shell: /bin/bash
+    passwordless_sudo: false
+
+system_groups:
+  - docker
+  - samba
+
+# ssh configuration
+ssh_keys:
+  - user: julian
+    path: .ssh/julian.pub
 # system configuration
 system_username: ansible
 
@@ -8,13 +35,6 @@ system_packages:
   - htop
 
 # docker configuration
-docker_networks:
-  - dockge
-  - jellyfin
-  - hemmelig
-  - actual-server
-  - arr
-
 docker_containers:
   - dockge
   - jellyfin
@@ -31,11 +51,8 @@ docker_uid: 1000
 docker_gid: 1000
 
 docker_data_folders:
-  - /mnt/storage/containers/dockge/data
   - /mnt/storage/containers/hemmelig/data
   - /mnt/storage/containers/hemmelig/database
-  - /mnt/storage/containers/jellyfin/cache
-  - /mnt/storage/containers/jellyfin/config
 
 # docker extension configuration
 docker_add_repo: true

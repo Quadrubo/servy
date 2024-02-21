@@ -8,3 +8,10 @@
     - { key: "PermitRootLogin", value: "no" }
     - { key: "PasswordAuthentication", value: "no" }
   notify: "restart ssh daemon"
+
+- name: Copy ssh keys
+  ansible.posix.authorized_key:
+    user: "{{ item.user }}"
+    state: present
+    key: "{{ lookup('file', item.path) }}"
+  loop: "{{ ssh_keys }}"
