@@ -5,18 +5,18 @@ services:
     container_name: jellyfin
     # user: uid:gid
     volumes:
-      - /mnt/storage/containers/jellyfin/config:/config
-      - /mnt/storage/containers/jellyfin/cache:/cache
-      - /mnt/storage/arr/media:/media:ro
+      - /mnt/user/storage/containers/jellyfin/config:/config
+      - /mnt/user/storage/containers/jellyfin/cache:/cache
+      - /mnt/user/storage/arr/media:/media:ro
     restart: 'unless-stopped'
     environment:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.{{ docker_l_hostname }}
     ports:
       - 8096:8096/tcp
-    # devices:
-    #   - /dev/dri/renderD128
-    #   - /dev/dri/card0
-    #   - /dev/dvb
+    devices:
+      - /dev/dri/renderD128
+      - /dev/dri/card0
+      - /dev/dvb
     networks:
       - net-jellyfin
     labels:

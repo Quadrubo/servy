@@ -1,15 +1,16 @@
+version: "3.8"
 services:
   hemmelig:
-    image: hemmeligapp/hemmelig:v5.19.4 # https://github.com/HemmeligOrg/Hemmelig.app/tags
+    image: hemmeligapp/hemmelig:v5.19.5 # https://github.com/HemmeligOrg/Hemmelig.app/tags
     hostname: hemmelig
     init: true
     volumes:
-      - /mnt/storage/containers/hemmelig/data/:/var/tmp/hemmelig/upload/files
-      - /mnt/storage/containers/hemmelig/database/:/home/node/hemmelig/database/
+      - /mnt/user/storage/containers/hemmelig/data/:/var/tmp/hemmelig/upload/files
+      - /mnt/user/storage/containers/hemmelig/database/:/home/node/hemmelig/database/
     environment:
       - SECRET_LOCAL_HOSTNAME=0.0.0.0
       - SECRET_PORT=3000
-      - SECRET_HOST=hemmelig.{{ docker_l_hostname }}
+      - SECRET_HOST=hemmelig.{{ docker_r_hostname }}
       - SECRET_ROOT_USER=groot
       - SECRET_ROOT_PASSWORD=iamroot # admin user password (CHANGE AFTER LOGIN)
       - SECRET_ROOT_EMAIL=hemmelig@{{ docker_hostname }}
@@ -18,7 +19,7 @@ services:
       - SECRET_JWT_SECRET={{ hemmelig_secret_jwt_secret }}
       - SECRET_MAX_TEXT_SIZE=256 # max text size in kb
     ports:
-      - "3000:3000"
+      - "8103:3000"
     restart: always
     stop_grace_period: 1m
     healthcheck:
@@ -29,7 +30,7 @@ services:
       - net-hemmelig
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hemmelig.rule=Host(`hemmelig.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.hemmelig.rule=Host(`hemmelig.{{ docker_r_hostname }}`)"
       - "traefik.http.routers.hemmelig.entrypoints=websecure"
       - "traefik.http.routers.hemmelig.tls.certresolver=myresolver"
 

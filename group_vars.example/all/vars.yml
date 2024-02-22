@@ -25,6 +25,7 @@ system_groups:
 ssh_keys:
   - user: julian
     path: .ssh/julian.pub
+    
 # system configuration
 system_username: ansible
 
@@ -51,8 +52,8 @@ docker_uid: 1000
 docker_gid: 1000
 
 docker_data_folders:
-  - /mnt/storage/containers/hemmelig/data
-  - /mnt/storage/containers/hemmelig/database
+  - /mnt/user/storage/containers/hemmelig/data
+  - /mnt/user/storage/containers/hemmelig/database
 
 # docker extension configuration
 docker_add_repo: true
@@ -63,7 +64,7 @@ pip_install_packages:
 
 # mergerfs extension configuration
 mergerfs_mounts:
-  - path: /mnt/storage
+  - path: /mnt/user/storage
     branches:
       - /mnt/parity1
       - /mnt/disk1

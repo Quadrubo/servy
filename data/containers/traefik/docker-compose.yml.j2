@@ -23,16 +23,32 @@ services:
       - "CF_DNS_API_TOKEN={{ traefik_cf_dns_api_token }}"
     networks:
       - net-dockge
-      # - net-jellyfin
+      - net-jellyfin
       # - net-hemmelig
-      # - net-actual-server
-      # - net-arr
+      - net-silverbullet
+      # - net-immich
+      # - net-nextcloud
+      # - net-ntfy
+      - net-tvheadend
+      - net-wikijs
+      - net-freshrss
+      - net-actual-server
+      - net-komga
+      - net-scrutiny
+      - net-speedtest-tracker
+      - net-uptime-kuma
+      - net-linkding
+      # - net-traccar
+      - net-dashy
+      - net-paperless-ngx
+      - net-gitea
+      - net-arr
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+      - "8102:8080"
     volumes:
-      - "/mnt/storage/containers/traefik/letsencrypt:/letsencrypt"
+      - "/mnt/user/storage/containers/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 networks:
@@ -40,18 +56,82 @@ networks:
     name: dockge
     external: true
 
-  # net-jellyfin:
-  #   name: jellyfin
-  #   external: true
+  net-jellyfin:
+    name: jellyfin
+    external: true
 
   # net-hemmelig:
   #   name: hemmelig
   #   external: true
 
-  # net-actual-server:
-  #   name: actual-server
+  net-silverbullet:
+    name: silverbullet
+    external: true
+
+  # net-immich:
+  #   name: immich
   #   external: true
 
-  # net-arr:
-  #   name: arr
+  # net-nextcloud:
+  #   name: nextcloud
   #   external: true
+
+  # net-ntfy:
+  #   name: ntfy
+  #   external: true
+
+  net-tvheadend:
+    name: tvheadend
+    external: true
+
+  net-wikijs:
+    name: wikijs
+    external: true
+
+  net-freshrss:
+    name: freshrss
+    external: true
+  
+  net-actual-server:
+    name: actual-server
+    external: true
+
+  net-komga:
+    name: komga
+    external: true
+
+  net-scrutiny:
+    name: scrutiny
+    external: true
+
+  net-speedtest-tracker:
+    name: speedtest-tracker
+    external: true
+  
+  net-uptime-kuma:
+    name: uptime-kuma
+    external: true
+
+  net-linkding:
+    name: linkding
+    external: true
+
+  # net-traccar:
+  #   name: traccar
+  #   external: true
+
+  net-dashy:
+    name: dashy
+    external: true
+
+  net-paperless-ngx:
+    name: paperless-ngx
+    external: true
+
+  net-gitea:
+    name: gitea
+    external: true
+
+  net-arr:
+    name: arr
+    external: true

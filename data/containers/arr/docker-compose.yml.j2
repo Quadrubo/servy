@@ -16,8 +16,10 @@ services:
       - 8989:8989 # sonarr
       - 8787:8787 # readarr
     volumes:
-      - /mnt/storage/containers/gluetun:/gluetun
+      - /mnt/user/storage/containers/gluetun:/gluetun
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=Europe/Berlin
       - VPN_SERVICE_PROVIDER=mullvad
       - VPN_TYPE=wireguard
@@ -72,8 +74,8 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
     volumes:
-      - /mnt/storage/containers/sabnzbd/config:/config
-      - /mnt/storage/arr/usenet:/arr/usenet #  https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+      - /mnt/user/storage/containers/sabnzbd/config:/config
+      - /mnt/user/storage/arr/usenet:/arr/usenet #  https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
     # ports:
     #   - 8080:8080
     restart: unless-stopped
@@ -100,8 +102,8 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
     volumes:
-      - /mnt/storage/containers/radarr/config/:/config
-      - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+      - /mnt/user/storage/containers/radarr/config/:/config
+      - /mnt/user/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
     # ports:
     #   - 7878
     restart: unless-stopped
@@ -125,8 +127,8 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
     volumes:
-      - /mnt/storage/containers/sonarr/config/:/config
-      - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+      - /mnt/user/storage/containers/sonarr/config/:/config
+      - /mnt/user/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
     # ports:
     #   - 8989
     restart: unless-stopped
@@ -150,8 +152,8 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
     volumes:
-      - /mnt/storage/containers/readarr/config/:/config
-      - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+      - /mnt/user/storage/containers/readarr/config/:/config
+      - /mnt/user/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
     # ports:
     #   - 8787:8787
     restart: unless-stopped
@@ -175,11 +177,11 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
     volumes:
-      - /mnt/storage/containers/kapowarr/db:/app/db
-      - /mnt/storage/arr/usenet:/app/temp_downloads
-      - /mnt/storage/arr/media/comics:/comics-1
-      # - /mnt/storage/containers/kapowarr/config/:/config
-      # - /mnt/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
+      - /mnt/user/storage/containers/kapowarr/db:/app/db
+      - /mnt/user/storage/arr/usenet:/app/temp_downloads
+      - /mnt/user/storage/arr/media/comics:/comics-1
+      # - /mnt/user/storage/containers/kapowarr/config/:/config
+      # - /mnt/user/storage/arr:/arr # https://wiki.servarr.com/docker-guide#consistent-and-well-planned-paths
     # ports:
     #   - 8787:8787
     restart: unless-stopped
