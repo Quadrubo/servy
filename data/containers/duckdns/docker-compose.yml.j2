@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  duckdns:
+    image: lscr.io/linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=quadrubo
+      - TOKEN={{ duckdns_token }}
+    volumes:
+      - /mnt/user/storage/containers/duckdns/config:/config

@@ -11,3 +11,27 @@ actual-server_actual_nordigen_secret_key: "xxx"
 # gluetun
 gluetun_wireguard_private_key: "xxx"
 gluetun_wireguard_addresses: "xxx"
+
+# duckdns
+duckdns_token: "xxx"
+
+# freshrss
+freshrss_postgres_password: "xxx"
+
+# gitea
+gitea_mariadb_password: "xxx"
+
+# paperless-ngx
+paperless-ngx_postgres_password: "xxx"
+paperless-ngx_paperless_secret_key: "xxx"
+
+# silverbullet
+silverbullet_username: "xxx"
+silverbullet_password: "xxx"
+
+# speedtest-tracker
+speedtest-tracker_mariadb_password: "xxx"
+speedtest-tracker_app_key: "xxx"
+
+# wikijs
+wikijs_postgres_password: "xxx"

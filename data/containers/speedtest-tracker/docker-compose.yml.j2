@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+  speedtest-tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    ports:
+      # - 8080:80
+      - 9443:443
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - DB_CONNECTION=mysql
+      - DB_HOST=speedtest-tracker-db
+      - DB_PORT=3306
+      - DB_DATABASE=speedtest_tracker
+      - DB_USERNAME=speedtest
+      - DB_PASSWORD={{ vars["speedtest-tracker_mariadb_password"] }}
+      - APP_KEY={{ vars["speedtest-tracker_app_key"] }}
+    volumes:
+      - /mnt/user/appdata/speedtest-tracker:/config
+    restart: unless-stopped
+    depends_on:
+      - speedtest-tracker-db
+    networks:
+      - net-speedtest-tracker
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.speedtest-tracker.rule=Host(`speedtest.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.speedtest-tracker.entrypoints=websecure"
+      - "traefik.http.routers.speedtest-tracker.tls.certresolver=myresolver"
+
+  speedtest-tracker-db:
+    image: mariadb:10
+    container_name: speedtest-tracker-db
+    restart: always
+    environment:
+      - MARIADB_DATABASE=speedtest_tracker
+      - MARIADB_USER=speedtest
+      - MARIADB_PASSWORD={{ vars["speedtest-tracker_mariadb_password"] }}
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - /mnt/user/storage/containers/speedtest-tracker-db/mysql:/var/lib/mysql
+    networks:
+      - net-speedtest-tracker
+
+networks:
+  net-speedtest-tracker:
+    name: speedtest-tracker

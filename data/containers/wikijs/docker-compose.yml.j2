@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  wikijs:
+    image: ghcr.io/requarks/wiki:2
+    container_name: wikijs
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=wikijs-db
+      - DB_PORT=5432
+      - DB_USER=wikijs
+      - DB_PASS={{ wikijs_postgres_password }}
+      - DB_NAME=wikijs
+    ports:
+      - 3002:3000
+    networks:
+      - net-wikijs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wikijs.rule=Host(`wikijs.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.wikijs.entrypoints=websecure"
+      - "traefik.http.routers.wikijs.tls.certresolver=myresolver"
+  
+  wikijs-db:
+    image: postgres:15-alpine
+    container_name: wikijs-db
+    environment:
+      POSTGRES_DB: wikijs
+      POSTGRES_PASSWORD: {{ wikijs_postgres_password }}
+      POSTGRES_USER: wikijs
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    volumes:
+      - /mnt/user/storage/containers/wikijs-db/data:/var/lib/postgresql/data
+    networks:
+      - net-wikijs
+
+networks:
+  net-wikijs:
+    name: wikijs

@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    volumes:
+      - /mnt/user/storage/containers/uptime-kuma/data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 3001:3001
+    restart: always
+    networks:
+      - net-uptime-kuma
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime-kuma.rule=Host(`uptime.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.uptime-kuma.entrypoints=websecure"
+      - "traefik.http.routers.uptime-kuma.tls.certresolver=myresolver"
+
+networks:
+  net-uptime-kuma:
+    name: uptime-kuma

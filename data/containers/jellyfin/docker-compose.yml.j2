@@ -13,10 +13,11 @@ services:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.{{ docker_l_hostname }}
     ports:
       - 8096:8096/tcp
-    devices:
-      - /dev/dri/renderD128
-      - /dev/dri/card0
-      - /dev/dvb
+    # TODO: uncomment these on the real server
+    # devices:
+    #   - /dev/dri/renderD128
+    #   - /dev/dri/card0
+    #   - /dev/dvb
     networks:
       - net-jellyfin
     labels:

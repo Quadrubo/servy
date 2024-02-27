@@ -63,8 +63,10 @@ pip_install_packages:
   - name: docker
 
 # mergerfs extension configuration
-mergerfs_mounts:
-  - path: /mnt/user/storage
-    branches:
-      - /mnt/parity1
-      - /mnt/disk1
+# TODO: this is wrong, when only having two disks, one should just use snapraidback
+# mergerfs is used to merge the remaining disks
+# mergerfs_mounts:
+#   - path: /mnt/user/storage
+#     branches:
+#       - /mnt/parity1
+#       - /mnt/disk1

@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  linkding:
+    container_name: linkding
+    image: sissbruecker/linkding:latest
+    ports:
+        - 9090:9090
+    volumes:
+        - /mnt/user/storage/containers/linkding/data:/etc/linkding/data
+    restart: unless-stopped
+    networks:
+      - net-linkding
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.linkding.rule=Host(`linkding.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.linkding.entrypoints=websecure"
+      - "traefik.http.routers.linkding.tls.certresolver=myresolver"
+
+networks:
+  net-linkding:
+    name: linkding
