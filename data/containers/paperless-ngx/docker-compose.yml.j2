@@ -5,7 +5,7 @@ services:
     container_name: paperless-ngx-redis
     restart: unless-stopped
     volumes:
-      - /mnt/user/storage/containers/paperless-ngx-redis/data:/data
+      - /mnt/storage/containers/paperless-ngx-redis/data:/data
     networks:
       - net-paperless-ngx
 
@@ -14,7 +14,7 @@ services:
     container_name: paperless-ngx-db
     restart: unless-stopped
     volumes:
-      - /mnt/user/storage/containers/paperless-ngx-db/data:/var/lib/postgresql/data
+      - /mnt/storage/containers/paperless-ngx-db/data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -32,10 +32,10 @@ services:
     ports:
       - 8002:8000
     volumes:
-      - /mnt/user/storage/containers/paperless-ngx/data:/usr/src/paperless/data
-      - /mnt/user/storage/containers/paperless-ngx/media:/usr/src/paperless/media
-      - /mnt/user/storage/containers/paperless-ngx/consume:/usr/src/paperless/consume
-      - /mnt/user/storage/containers/paperless-ngx/export:/usr/src/paperless/export
+      - /mnt/storage/containers/paperless-ngx/data:/usr/src/paperless/data
+      - /mnt/storage/containers/paperless-ngx/media:/usr/src/paperless/media
+      - /mnt/storage/containers/paperless-ngx/consume:/usr/src/paperless/consume
+      - /mnt/storage/containers/paperless-ngx/export:/usr/src/paperless/export
     environment:
       - PAPERLESS_REDIS=redis://paperless-ngx-redis:6379
       - PAPERLESS_DBHOST=paperless-ngx-db

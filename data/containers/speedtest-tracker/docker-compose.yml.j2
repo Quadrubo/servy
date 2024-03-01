@@ -18,7 +18,7 @@ services:
       - DB_PASSWORD={{ vars["speedtest-tracker_mariadb_password"] }}
       - APP_KEY={{ vars["speedtest-tracker_app_key"] }}
     volumes:
-      - /mnt/user/appdata/speedtest-tracker:/config
+      - /mnt/storage/containers/speedtest-tracker/config:/config
     restart: unless-stopped
     depends_on:
       - speedtest-tracker-db
@@ -40,7 +40,7 @@ services:
       - MARIADB_PASSWORD={{ vars["speedtest-tracker_mariadb_password"] }}
       - MARIADB_RANDOM_ROOT_PASSWORD=true
     volumes:
-      - /mnt/user/storage/containers/speedtest-tracker-db/mysql:/var/lib/mysql
+      - /mnt/storage/containers/speedtest-tracker-db/mysql:/var/lib/mysql
     networks:
       - net-speedtest-tracker
 

@@ -31,7 +31,7 @@ services:
       driver: "none"
     restart: unless-stopped
     volumes:
-      - /mnt/user/storage/containers/wikijs-db/data:/var/lib/postgresql/data
+      - /mnt/storage/containers/wikijs-db/data:/var/lib/postgresql/data
     networks:
       - net-wikijs
 

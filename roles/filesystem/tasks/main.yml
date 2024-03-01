@@ -1,0 +1,21 @@
+- name: Get zpool facts
+  ignore_errors: true
+  community.general.zpool_facts:
+    name: "{{ filesystem_zfs_pool_name }}"
+  register: _zpool_facts_task
+
+- name: "Create ZFS pool: {{ filesystem_zfs_pool_name }}"
+  when: _zpool_facts_task.failed
+  become: true
+  ansible.builtin.command: "zpool create -f -o ashift={{ filesystem_zfs_pool_ashift }} {{ filesystem_zfs_pool_name }} raidz1 {{ filesystem_zfs_pool_disks | join(' ') }}"
+
+- name: Get zfs pool mountpoint
+  ignore_errors: true
+  community.general.zfs_facts:
+    name: "{{ filesystem_zfs_pool_name }}"
+  register: _zfs_facts_task
+
+- name: "Change ZFS Pool mountpoint"
+  when: _zfs_facts_task.ansible_facts.ansible_zfs_datasets[0].mountpoint != "/mnt/storage"
+  become: true
+  ansible.builtin.command: "zfs set mountpoint={{ filesystem_zfs_pool_mountpoint }} {{ filesystem_zfs_pool_name }}"

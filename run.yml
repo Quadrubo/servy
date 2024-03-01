@@ -5,9 +5,9 @@
 
   roles:
     - {role: 'system', tags: 'system'}
+    - {role: 'filesystem', tags: 'filesystem'}
     - {role: 'ssh', tags: 'ssh'}
     - {role: 'drives', tags: 'drives'}
-    - {role: 'tigattack.mergerfs', tags: 'tigattack.mergerfs'}
     - {role: 'geerlingguy.pip', tags: 'geerlingguy.pip'}
     - {role: 'geerlingguy.docker', tags: 'geerlingguy.docker'}
     - {role: 'docker', tags: 'docker'}

@@ -12,13 +12,14 @@ services:
     volumes:
       - /run/udev:/run/udev:ro
       - /mnt/u tser/storage/containers/scrutiny/config:/opt/scrutiny/config
-      - /mnt/user/storage/containers/scrutiny/influxdb:/opt/scrutiny/influxdb
-    # TODO: uncomment and replace with drives on real system
-    # devices:
-    #   - /dev/sdb
-    #   - /dev/sdc
-    #   - /dev/nvme0n1
-    #   - /dev/nvme1n1
+      - /mnt/storage/containers/scrutiny/influxdb:/opt/scrutiny/influxdb
+    devices:
+      - /dev/sda
+      - /dev/sdb
+      - /dev/sdc
+      - /dev/sdd
+      - /dev/nvme0n1
+      - /dev/nvme1n1
     networks:
       - net-scrutiny
     labels:

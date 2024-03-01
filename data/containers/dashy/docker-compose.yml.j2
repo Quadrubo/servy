@@ -8,9 +8,9 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      # - /mnt/user/storage/containers/dashy/conf.yml:/app/public/conf.yml
-      # - /mnt/user/storage/containers/dashy/item-icons/:/app/public/item-icons/
-      - /mnt/user/storage/containers/dashy/public:/app/public
+      # - /mnt/storage/containers/dashy/conf.yml:/app/public/conf.yml
+      # - /mnt/storage/containers/dashy/item-icons/:/app/public/item-icons/
+      - /mnt/storage/containers/dashy/public:/app/public
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'node', '/app/services/healthcheck']

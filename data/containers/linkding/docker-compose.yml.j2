@@ -6,7 +6,7 @@ services:
     ports:
         - 9090:9090
     volumes:
-        - /mnt/user/storage/containers/linkding/data:/etc/linkding/data
+        - /mnt/storage/containers/linkding/data:/etc/linkding/data
     restart: unless-stopped
     networks:
       - net-linkding

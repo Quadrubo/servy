@@ -4,8 +4,8 @@ services:
     image: gotson/komga
     container_name: komga
     volumes:
-      - /mnt/user/storage/containers/komga/config:/config
-      - /mnt/user/storage/arr/media/comics:/data:ro
+      - /mnt/storage/containers/komga/config:/config
+      - /mnt/storage/arr/media/comics:/data:ro
     ports:
       - 8084:25600
     restart: unless-stopped

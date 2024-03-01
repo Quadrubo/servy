@@ -24,11 +24,11 @@ services:
     networks:
       - net-dockge
       - net-jellyfin
-      ## - net-hemmelig
+      - net-hemmelig
       - net-silverbullet
       ## - net-immich
-      ## - net-nextcloud
-      ## - net-ntfy
+      - net-nextcloud
+      - net-ntfy
       - net-tvheadend
       - net-wikijs
       - net-freshrss
@@ -38,7 +38,7 @@ services:
       - net-speedtest-tracker
       - net-uptime-kuma
       - net-linkding
-      ## - net-traccar
+      - net-traccar
       - net-dashy
       - net-paperless-ngx
       - net-gitea
@@ -48,7 +48,7 @@ services:
       - "443:443"
       - "8102:8080"
     volumes:
-      - "/mnt/user/storage/containers/traefik/letsencrypt:/letsencrypt"
+      - "/mnt/storage/containers/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 networks:
@@ -60,9 +60,9 @@ networks:
     name: jellyfin
     external: true
 
-  # net-hemmelig:
-  #   name: hemmelig
-  #   external: true
+  net-hemmelig:
+    name: hemmelig
+    external: true
 
   net-silverbullet:
     name: silverbullet
@@ -72,13 +72,13 @@ networks:
   #   name: immich
   #   external: true
 
-  # net-nextcloud:
-  #   name: nextcloud
-  #   external: true
+  net-nextcloud:
+    name: nextcloud
+    external: true
 
-  # net-ntfy:
-  #   name: ntfy
-  #   external: true
+  net-ntfy:
+    name: ntfy
+    external: true
 
   net-tvheadend:
     name: tvheadend
@@ -116,9 +116,9 @@ networks:
     name: linkding
     external: true
 
-  # net-traccar:
-  #   name: traccar
-  #   external: true
+  net-traccar:
+    name: traccar
+    external: true
 
   net-dashy:
     name: dashy

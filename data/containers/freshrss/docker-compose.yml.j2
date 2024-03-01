@@ -6,7 +6,7 @@ services:
     environment:
       - TZ=Europe/Berlin
     volumes:
-      - /mnt/user/storage/containers/freshrss/config:/config
+      - /mnt/storage/containers/freshrss/config:/config
       - /mnt/user/appdata/freshrss:/config
     ports:
       - 8088:80
@@ -30,7 +30,7 @@ services:
       driver: "none"
     restart: unless-stopped
     volumes:
-      - /mnt/user/storage/containers/freshrss-db/data:/var/lib/postgresql/data
+      - /mnt/storage/containers/freshrss-db/data:/var/lib/postgresql/data
     networks:
       - net-freshrss
 

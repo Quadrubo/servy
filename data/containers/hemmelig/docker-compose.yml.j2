@@ -5,8 +5,8 @@ services:
     hostname: hemmelig
     init: true
     volumes:
-      - /mnt/user/storage/containers/hemmelig/data/:/var/tmp/hemmelig/upload/files
-      - /mnt/user/storage/containers/hemmelig/database/:/home/node/hemmelig/database/
+      - /mnt/storage/containers/hemmelig/data/:/var/tmp/hemmelig/upload/files
+      - /mnt/storage/containers/hemmelig/database/:/home/node/hemmelig/database/
     environment:
       - SECRET_LOCAL_HOSTNAME=0.0.0.0
       - SECRET_PORT=3000

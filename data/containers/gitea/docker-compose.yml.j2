@@ -14,7 +14,7 @@ services:
       - GITEA__database__PASSWD={{ gitea_mariadb_password }}
     restart: always
     volumes:
-      - /mnt/user/storage/containers/gitea/data:/data
+      - /mnt/storage/containers/gitea/data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -41,7 +41,7 @@ services:
       - MARIADB_PASSWORD={{ gitea_mariadb_password }}
       - MARIADB_RANDOM_ROOT_PASSWORD=true
     volumes:
-      - /mnt/user/storage/containers/gitea-db/mysql:/var/lib/mysql
+      - /mnt/storage/containers/gitea-db/mysql:/var/lib/mysql
     networks:
       - net-gitea
 

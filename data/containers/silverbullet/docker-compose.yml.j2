@@ -6,7 +6,7 @@ services:
     environment:
       - SB_USER={{ silverbullet_username }}:{{ silverbullet_password }}
     volumes:
-      - /mnt/user/storage/containers/silverbullet/space:/space
+      - /mnt/storage/containers/silverbullet/space:/space
     ports:
       - 8100:3000
     networks:

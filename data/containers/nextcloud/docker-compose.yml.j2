@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=99
+      - PGID=100
+    volumes:
+      - /mnt/storage/containers/nextcloud/config:/config
+      - /mnt/storage/containers/nextcloud/data:/data
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+    networks:
+      - net-nextcloud
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.{{ docker_r_hostname }}`)"
+      - "traefik.http.routers.nextcloud.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud.tls.certresolver=myresolver"
+
+  nextcloud-db:
+    image: mariadb:10
+    container_name: nextcloud-db
+    environment:
+      - TCP_PORT_3306=3306
+      - MARIADB_ROOT_PASSWORD={{ nextcloud_mariadb_root_password }}
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+      - MARIADB_PASSWORD={{ nextcloud_mariadb_password }}
+    volumes:
+      - /mnt/storage/containers/nextcloud-db/mysql:/var/lib/mysql
+    networks:
+      - net-nextcloud
+
+  nextcloud-redis:
+    image: redis
+    container_name: nextcloud-redis
+    environment:
+      - TCP_PORT_6379=6379
+    networks:
+      - net-nextcloud
+
+networks:
+  net-nextcloud:
+    name: nextcloud

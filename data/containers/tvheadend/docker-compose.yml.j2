@@ -8,17 +8,14 @@ services:
       - PUID=99
       - PGID=100
     volumes:
-      - /mnt/user/media/recordings/:/recordings
-      - /mnt/user/storage/containers/tvheadend/recordings/:/recordings
-      - /mnt/user/appdata/tvheadend:/config
-      - /mnt/user/storage/containers/tvheadend/config:/config
+      - /mnt/storage/arr/media/recordings/:/recordings
+      - /mnt/storage/containers/tvheadend/config:/config
     ports:
       - 9981:9981
       - 9982:9982
-    # TODO: uncomment on real server
-    # devices:
-    #   - /dev/dri
-    #   - /dev/dvb
+    devices:
+      - /dev/dri
+      - /dev/dvb
     restart: unless-stopped
     networks:
       - net-tvheadend
