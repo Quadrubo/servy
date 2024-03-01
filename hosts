@@ -1,2 +1,2 @@
 [home]
-servy ansible_host=192.168.5.76 ansible_user=ansible ansible_connection=ssh ansible_ssh_private_key_file=./.ssh/servy
+servy ansible_host=192.168.5.10 ansible_user=ansible ansible_connection=ssh ansible_ssh_private_key_file=./.ssh/servy

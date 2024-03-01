@@ -18,6 +18,8 @@ services:
     volumes:
       - /mnt/storage/containers/gluetun:/gluetun
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=Europe/Berlin
       - VPN_SERVICE_PROVIDER=mullvad
       - VPN_TYPE=wireguard
@@ -198,4 +200,3 @@ services:
 networks:
   net-arr:
     name: arr
-    external: true

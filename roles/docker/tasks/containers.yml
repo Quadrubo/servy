@@ -25,11 +25,6 @@
     group: "{{ system_username }}"
   loop: "{{ docker_containers }}"
 
-- name: Create docker networks for traefik
-  community.docker.docker_network:
-    name: "{{ item }}"
-  loop: "{{ docker_networks }}"
-
 - name: Test docker-compose
   community.docker.docker_compose_v2:
     project_src: "/srv/containers/{{ item }}"

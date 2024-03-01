@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  onlyoffice-documentserver:
+    image: onlyoffice/documentserver:latest
+    container_name: onlyoffice-documentserver
+    environment:
+      - JWT_SECRET={{ vars["onlyoffice-documentserver_jwt_secret"] }}
+      - METRICS_ENABLED=false
+    volumes:
+      - /mnt/storage/containers/onlyoffice-documentserver/logs:/var/log/onlyoffice
+      - /mnt/storage/containers/onlyoffice-documentserver/Data:/var/www/onlyoffice/Data
+      - /mnt/storage/containers/onlyoffice-documentserver/fonts:/usr/share/fonts
+    networks:
+      - net-nextcloud
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.onlyoffice-documentserver.rule=Host(`nextcloudds.{{ docker_r_hostname }}`)"
+      - "traefik.http.routers.onlyoffice-documentserver.entrypoints=websecure"
+      - "traefik.http.routers.onlyoffice-documentserver.tls.certresolver=myresolver"
+      # Make onlyoffice work
+      - "traefik.http.routers.onlyoffice-documentserver.middlewares=onlyoffice-headers"
+      - "traefik.http.middlewares.onlyoffice-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+
+networks:
+  net-nextcloud:
+    name: nextcloud
+    external: true

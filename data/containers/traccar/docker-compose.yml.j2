@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  traccar:
+    image: traccar/traccar:latest
+    container_name: traccar
+    hostname: traccar
+    ports:
+      - 8082:8082
+      - 5000-5150:5000-5150
+      - 5000-5150:5000-5150/udp
+    volumes:
+      - /mnt/storage/containers/traccar/logs:/opt/traccar/logs:rw
+      - /mnt/storage/containers/traccar/traccar.xml:/opt/traccar/conf/traccar.xml:ro
+    restart: always
+    networks:
+      - net-traccar
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traccar.rule=Host(`traccar.{{ docker_r_hostname }}`)"
+      - "traefik.http.routers.traccar.entrypoints=websecure"
+      - "traefik.http.routers.traccar.tls.certresolver=myresolver"
+      - "traefik.http.services.traccar.loadbalancer.server.port=8082"
+
+  traccar-db:
+    image: mariadb:10
+    container_name: traccar-db
+    environment:
+      - TCP_PORT_3306=3306
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+      - MARIADB_DATABASE=traccar
+      - MARIADB_USER=traccar
+      - MARIADB_PASSWORD={{ traccar_mariadb_password }}
+    volumes:
+      - /mnt/storage/containers/traccar-db/mysql:/var/lib/mysql
+    networks:
+      - net-traccar
+
+networks:
+  net-traccar:
+    name: traccar

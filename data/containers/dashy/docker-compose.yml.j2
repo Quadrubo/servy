@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  dashy:
+    image: lissy93/dashy:latest
+    container_name: dashy
+    ports:
+      - 4000:80
+    environment:
+      - NODE_ENV=production
+    volumes:
+      # - /mnt/storage/containers/dashy/conf.yml:/app/public/conf.yml
+      # - /mnt/storage/containers/dashy/item-icons/:/app/public/item-icons/
+      - /mnt/storage/containers/dashy/public:/app/public
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - net-dashy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashy.rule=Host(`dashy.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.dashy.entrypoints=websecure"
+      - "traefik.http.routers.dashy.tls.certresolver=myresolver"
+
+networks:
+  net-dashy:
+    name: dashy

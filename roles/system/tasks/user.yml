@@ -1,36 +1,24 @@
 - name: Ensure all necessary groups are created
   ansible.builtin.group:
     name: "{{ item }}"
-  loop:
-    - docker
-    - samba
-    - "{{ system_username }}"
+  loop: "{{ system_groups | union(system_users | map(attribute='groups') | flatten) }}"
 
-- name: Ensure the non-root user is created
+- name: Ensure non-root users are created
   ansible.builtin.user:
-    name: "{{ system_username }}"
-    password: "{{ system_password | password_hash('sha512') }}"
-    groups:
-      - sudo
-      - docker
-      - users
+    name: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    groups: "{{ item.groups }}"
     append: true
-    shell: "{{ system_shell }}"
+    shell: "{{ item.shell }}"
     update_password: on_create
+  loop: "{{ system_users }}"
+  when: item.create | default(true) | bool
 
-- name: Enable passwordless sudo for "{{ system_username }}"
+- name: Enable passwordless sudo for users
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: "^%whell"
-    line: "{{ system_username }} ALL=(ALL) NOPASSWD: ALL"
+    line: "{{ item.name }} ALL=(ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
-
-- name: Suppress login message (hushlogin)
-  ansible.builtin.file:
-    path: "/home/{{ system_username }}/.hushlogin"
-    mode: "0644"
-    owner: "{{ system_username }}"
-    group: "{{ system_username }}"
-    modification_time: preserve
-    access_time: preserve
-    state: touch
+  loop: "{{ system_users }}"
+  when: item.passwordless_sudo | default(false) | bool

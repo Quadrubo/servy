@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  borgmatic:
+    image: ghcr.io/borgmatic-collective/borgmatic
+    container_name: borgmatic
+    environment:
+      - BORG_PASSPHRASE={{ borgmatic_borg_passphrase }}
+    volumes:
+      - /mnt/user:/mnt/user:ro # source user
+      - /boot:/boot:ro # source boot
+      - /mnt/storage/borg-repository:/mnt/borg-repository # backup target (unused)
+      - /mnt/storage/containers/borgmatic/config:/etc/borgmatic.d # borgmatic config file(s) + crontab.txt
+      - /mnt/storage/containers/borgmatic/state:/root/.borgmatic # borgmatic state files
+      - /mnt/storage/containers/borgmatic/keys:/root/.config/borg # config and keyfiles
+      - /mnt/storage/containers/borgmatic/ssh-keys:/root/.ssh # ssh key for remote repositories
+      - /mnt/storage/containers/borgmatic/cache:/root/.cache/borg # checksums used for deduplication
+    networks:
+      - net-nextcloud # nextcloud-db
+    devices:
+      - /dev/fuse
+    cap_add:
+      - SYS_ADMIN
+
+networks:
+  net-nextcloud:
+    name: nextcloud
+    external: true

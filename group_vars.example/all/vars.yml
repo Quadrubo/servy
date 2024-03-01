@@ -1,3 +1,44 @@
+# It is recommended to encrypt this file using ansible-vault before commiting it anywhere
+
+# filesystem configuration
+# read "Identifying the ids to use for the zfs pool" in the README.md for help.
+filesystem_zfs_pool_name: default
+filesystem_zfs_pool_disks: []
+filesystem_zfs_pool_ashift: 12
+filesystem_zfs_pool_mountpoint: /mnt/storage
+
+# user configuration
+# you can add as many users as you like
+system_users:
+  - name: ansible
+    password: password
+    groups:
+      - sudo
+      - docker
+      - users
+    shell: /bin/bash
+    passwordless_sudo: true
+  - name: julian
+    password: password
+    groups:
+      - sudo
+      - docker
+      - users
+    shell: /bin/bash
+    passwordless_sudo: false
+
+# the groups that will be created on the system
+system_groups:
+  - docker
+  - samba
+
+# ssh configuration
+# you can add as many ssh keys as you like here
+# make sure you created them first
+ssh_keys:
+  - user: julian
+    path: .ssh/julian.pub
+    
 # system configuration
 system_username: ansible
 
@@ -8,20 +49,14 @@ system_packages:
   - htop
 
 # docker configuration
-docker_networks:
-  - dockge
-  - jellyfin
-  - hemmelig
-  - actual-server
-  - arr
-
 docker_containers:
   - dockge
   - jellyfin
   - hemmelig
   - actual-server
   - arr
-  - traefik
+  - borgmatic # needs to be far back because it backs up databases of other containers
+  - traefik # needs to go last because of the networks
 
 docker_hostname: example.com
 docker_l_hostname: l.example.com
@@ -31,11 +66,8 @@ docker_uid: 1000
 docker_gid: 1000
 
 docker_data_folders:
-  - /mnt/storage/containers/dockge/data
   - /mnt/storage/containers/hemmelig/data
   - /mnt/storage/containers/hemmelig/database
-  - /mnt/storage/containers/jellyfin/cache
-  - /mnt/storage/containers/jellyfin/config
 
 # docker extension configuration
 docker_add_repo: true
@@ -43,10 +75,3 @@ docker_add_repo: true
 # pip extension configuration
 pip_install_packages:
   - name: docker
-
-# mergerfs extension configuration
-mergerfs_mounts:
-  - path: /mnt/storage
-    branches:
-      - /mnt/parity1
-      - /mnt/disk1

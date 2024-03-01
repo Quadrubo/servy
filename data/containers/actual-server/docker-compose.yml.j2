@@ -2,8 +2,9 @@ version: '3'
 services:
   actual-server:
     image: docker.io/actualbudget/actual-server:latest
+    container_name: actual-server
     ports:
-      - '5006:5006'
+      - '8087:5006'
     environment:
       - ACTUAL_NORDIGEN_SECRET_ID={{ vars["actual-server_actual_nordigen_secret_id"] }}
       - ACTUAL_NORDIGEN_SECRET_KEY={{ vars["actual-server_actual_nordigen_secret_key"] }}
@@ -21,4 +22,3 @@ services:
 networks:
   net-actual-server:
     name: actual-server
-    external: true

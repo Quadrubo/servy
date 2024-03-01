@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  tvheadend:
+    image: lscr.io/linuxserver/tvheadend
+    container_name: tvheadend
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=99
+      - PGID=100
+    volumes:
+      - /mnt/storage/arr/media/recordings/:/recordings
+      - /mnt/storage/containers/tvheadend/config:/config
+    ports:
+      - 9981:9981
+      - 9982:9982
+    devices:
+      - /dev/dri
+      - /dev/dvb
+    restart: unless-stopped
+    networks:
+      - net-tvheadend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tvheadend.rule=Host(`tvheadend.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.tvheadend.entrypoints=websecure"
+      - "traefik.http.routers.tvheadend.tls.certresolver=myresolver"
+
+networks:
+  net-tvheadend:
+    name: tvheadend

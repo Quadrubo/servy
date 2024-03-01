@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  komga:
+    image: gotson/komga
+    container_name: komga
+    volumes:
+      - /mnt/storage/containers/komga/config:/config
+      - /mnt/storage/arr/media/comics:/data:ro
+    ports:
+      - 8084:25600
+    restart: unless-stopped
+    networks:
+      - net-komga
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.komga.rule=Host(`komga.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.komga.entrypoints=websecure"
+      - "traefik.http.routers.komga.tls.certresolver=myresolver"
+
+networks:
+  net-komga:
+    name: komga

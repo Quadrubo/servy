@@ -1,0 +1,59 @@
+version: "3.8"
+services:
+  paperless-ngx-redis:
+    image: docker.io/library/redis:7
+    container_name: paperless-ngx-redis
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-redis/data:/data
+    networks:
+      - net-paperless-ngx
+
+  paperless-ngx-db:
+    image: docker.io/library/postgres:15
+    container_name: paperless-ngx-db
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: {{ vars["paperless-ngx_postgres_password"] }}
+    networks:
+        - net-paperless-ngx
+
+  paperless-ngx:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-ngx
+    restart: unless-stopped
+    depends_on:
+      - paperless-ngx-db
+      - paperless-ngx-redis
+    ports:
+      - 8002:8000
+    volumes:
+      - /mnt/storage/containers/paperless-ngx/data:/usr/src/paperless/data
+      - /mnt/storage/containers/paperless-ngx/media:/usr/src/paperless/media
+      - /mnt/storage/containers/paperless-ngx/consume:/usr/src/paperless/consume
+      - /mnt/storage/containers/paperless-ngx/export:/usr/src/paperless/export
+    environment:
+      - PAPERLESS_REDIS=redis://paperless-ngx-redis:6379
+      - PAPERLESS_DBHOST=paperless-ngx-db
+      - PAPERLESS_DBPORT=5432
+      - PAPERLESS_DBNAME=paperless
+      - PAPERLESS_DBUSER=paperless
+      - PAPERLESS_DBPASS={{ vars["paperless-ngx_postgres_password"] }}
+      - PAPERLESS_OCR_LANGUAGE=deu+eng
+      - PAPERLESS_URL=https://paperless.{{ docker_l_hostname }}
+      - PAPERLESS_SECRET_KEY={{ vars["paperless-ngx_paperless_secret_key"] }}
+    networks:
+      - net-paperless-ngx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paperless-ngx.rule=Host(`paperless.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.paperless-ngx.entrypoints=websecure"
+      - "traefik.http.routers.paperless-ngx.tls.certresolver=myresolver"
+
+networks:
+  net-paperless-ngx:
+    name: paperless-ngx

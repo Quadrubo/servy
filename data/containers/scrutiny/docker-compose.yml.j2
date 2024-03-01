@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  scrutiny:
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    container_name: scrutiny
+    cap_add:
+      - SYS_RAWIO # hdd
+      - SYS_ADMIN # nvme
+    ports:
+      - 9927:8080 # webapp
+      # - 8086:8086 #influxDB admin
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /mnt/u tser/storage/containers/scrutiny/config:/opt/scrutiny/config
+      - /mnt/storage/containers/scrutiny/influxdb:/opt/scrutiny/influxdb
+    devices:
+      - /dev/sda
+      - /dev/sdb
+      - /dev/sdc
+      - /dev/sdd
+      - /dev/nvme0n1
+      - /dev/nvme1n1
+    networks:
+      - net-scrutiny
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.scrutiny.entrypoints=websecure"
+      - "traefik.http.routers.scrutiny.tls.certresolver=myresolver"
+
+networks:
+  net-scrutiny:
+    name: scrutiny

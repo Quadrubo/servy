@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  silverbullet:
+    image: zefhemel/silverbullet
+    restart: unless-stopped
+    environment:
+      - SB_USER={{ silverbullet_username }}:{{ silverbullet_password }}
+    volumes:
+      - /mnt/storage/containers/silverbullet/space:/space
+    ports:
+      - 8100:3000
+    networks:
+      - net-silverbullet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.silverbullet.rule=Host(`silverbullet.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.silverbullet.entrypoints=websecure"
+      - "traefik.http.routers.silverbullet.tls.certresolver=myresolver"
+
+networks:
+  net-silverbullet:
+    name: silverbullet

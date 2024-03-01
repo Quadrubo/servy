@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:latest
+    container_name: freshrss
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/freshrss/config:/config
+      - /mnt/user/appdata/freshrss:/config
+    ports:
+      - 8088:80
+    restart: unless-stopped
+    networks:
+      - net-freshrss
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.freshrss.rule=Host(`freshrss.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.freshrss.entrypoints=websecure"
+      - "traefik.http.routers.freshrss.tls.certresolver=myresolver"
+
+  freshrss-db:
+    image: postgres:15-alpine
+    container_name: freshrss-db
+    environment:
+      POSTGRES_DB: freshrss
+      POSTGRES_PASSWORD: {{ freshrss_postgres_password }}
+      POSTGRES_USER: freshrss
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/freshrss-db/data:/var/lib/postgresql/data
+    networks:
+      - net-freshrss
+
+networks:
+  net-freshrss:
+    name: freshrss

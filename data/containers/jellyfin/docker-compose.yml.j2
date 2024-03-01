@@ -4,6 +4,9 @@ services:
     image: jellyfin/jellyfin
     container_name: jellyfin
     # user: uid:gid
+    # TODO: find out if this is necessary
+    group_add:
+      - "104"
     volumes:
       - /mnt/storage/containers/jellyfin/config:/config
       - /mnt/storage/containers/jellyfin/cache:/cache
@@ -13,10 +16,10 @@ services:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.{{ docker_l_hostname }}
     ports:
       - 8096:8096/tcp
-    # devices:
-    #   - /dev/dri/renderD128
-    #   - /dev/dri/card0
-    #   - /dev/dvb
+    devices:
+      - /dev/dri/renderD128
+      - /dev/dri/card0
+      - /dev/dvb
     networks:
       - net-jellyfin
     labels:
@@ -28,4 +31,3 @@ services:
 networks:
   net-jellyfin:
     name: jellyfin
-    external: true

@@ -1,0 +1,4 @@
+filesystem_zfs_pool_name: default
+filesystem_zfs_pool_disks: []
+filesystem_zfs_pool_ashift: 12
+filesystem_zfs_pool_mountpoint: /mnt/storage
