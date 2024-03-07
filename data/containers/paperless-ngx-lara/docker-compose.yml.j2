@@ -5,7 +5,7 @@ services:
     container_name: paperless-ngx-lara-node-hp-scan-to
     environment:
       - IP=192.168.5.70
-      - LABEL=Servy-Lara
+      - LABEL=Paperless-Lara
       - DIR=/scan
       - PATTERN="scan"_dd.mm.yyyy_hh:MM:ss
       - PUID=995
@@ -63,6 +63,7 @@ services:
       - PAPERLESS_SECRET_KEY={{ vars["paperless-ngx-lara_paperless_secret_key"] }}
       - USERMAP_UID=995
       - USERMAP_GID=994
+      - PAPERLESS_APP_TITLE=Paperless (Lara)
     networks:
       - net-paperless-ngx-lara
     labels:
