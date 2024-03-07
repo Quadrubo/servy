@@ -43,6 +43,7 @@ services:
       - net-dashy
       - net-paperless-ngx
       - net-paperless-ngx-julian
+      - net-paperless-ngx-lara
       - net-gitea
       - net-arr
     ports:
@@ -136,6 +137,10 @@ networks:
 
   net-paperless-ngx-julian:
     name: paperless-ngx-julian
+    external: true
+
+  net-paperless-ngx-lara:
+    name: paperless-ngx-lara
     external: true
 
   net-gitea:

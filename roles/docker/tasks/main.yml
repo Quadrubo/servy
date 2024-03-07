@@ -1,2 +1,48 @@
-- name: Include container tasks
-  ansible.builtin.include_tasks: containers.yml
+- name: Ensure docker dameon is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Copy the daemon.json file
+  ansible.builtin.copy:
+    src: "data/docker/daemon.json"
+    dest: "/etc/docker/daemon.json"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  notify: "restart docker daemon"
+
+- name: Create the container directories
+  ansible.builtin.file:
+    path: "/srv/containers/{{ item }}"
+    state: directory
+    mode: "0744"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  loop: "{{ docker_containers }}"
+
+- name: Create the container data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0744"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  loop: "{{ docker_data_folders }}"
+
+- name: Template & copy the compose files
+  ansible.builtin.template:
+    src: "data/containers/{{ item }}/docker-compose.yml.j2"
+    dest: "/srv/containers/{{ item }}/docker-compose.yml"
+    mode: "0644"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  loop: "{{ docker_containers }}"
+
+- name: Test docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/srv/containers/{{ item }}"
+    state: present
+  loop: "{{ docker_containers }}"
+  become: true
+  become_user: ansible

@@ -1,0 +1,76 @@
+version: "3.8"
+services:
+  paperless-ngx-lara-node-hp-scan-to:
+    image: manuc66/node-hp-scan-to:latest
+    container_name: paperless-ngx-lara-node-hp-scan-to
+    environment:
+      - IP=192.168.5.70
+      - LABEL=Servy-Lara
+      - DIR=/scan
+      - PATTERN="scan"_dd.mm.yyyy_hh:MM:ss
+      - PUID=995
+      - PGID=994
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-lara/consume:/scan
+    restart: always
+
+  paperless-ngx-lara-redis:
+    image: docker.io/library/redis:7
+    container_name: paperless-ngx-lara-redis
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-lara-redis/data:/data
+    networks:
+      - net-paperless-ngx-lara
+
+  paperless-ngx-lara-db:
+    image: docker.io/library/postgres:15
+    container_name: paperless-ngx-lara-db
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-lara-db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: {{ vars["paperless-ngx-lara_postgres_password"] }}
+    networks:
+        - net-paperless-ngx-lara
+
+  paperless-ngx-lara:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-ngx-lara
+    restart: unless-stopped
+    depends_on:
+      - paperless-ngx-lara-db
+      - paperless-ngx-lara-redis
+    ports:
+      - 8004:8000
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-lara/data:/usr/src/paperless/data
+      - /mnt/storage/containers/paperless-ngx-lara/media:/usr/src/paperless/media
+      - /mnt/storage/containers/paperless-ngx-lara/consume:/usr/src/paperless/consume
+      - /mnt/storage/containers/paperless-ngx-lara/export:/usr/src/paperless/export
+    environment:
+      - PAPERLESS_REDIS=redis://paperless-ngx-lara-redis:6379
+      - PAPERLESS_DBHOST=paperless-ngx-lara-db
+      - PAPERLESS_DBPORT=5432
+      - PAPERLESS_DBNAME=paperless
+      - PAPERLESS_DBUSER=paperless
+      - PAPERLESS_DBPASS={{ vars["paperless-ngx-lara_postgres_password"] }}
+      - PAPERLESS_OCR_LANGUAGE=deu+eng
+      - PAPERLESS_URL=https://paperless-l.{{ docker_l_hostname }}
+      - PAPERLESS_SECRET_KEY={{ vars["paperless-ngx-lara_paperless_secret_key"] }}
+      - USERMAP_UID=995
+      - USERMAP_GID=994
+    networks:
+      - net-paperless-ngx-lara
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paperless-ngx-lara.rule=Host(`paperless-l.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.paperless-ngx-lara.entrypoints=websecure"
+      - "traefik.http.routers.paperless-ngx-lara.tls.certresolver=myresolver"
+
+networks:
+  net-paperless-ngx-lara:
+    name: paperless-ngx-lara
