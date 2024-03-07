@@ -1,0 +1,76 @@
+version: "3.8"
+services:
+  paperless-ngx-julian-node-hp-scan-to:
+    image: manuc66/node-hp-scan-to:latest
+    container_name: paperless-ngx-julian-node-hp-scan-to
+    environment:
+      - IP=192.168.5.70
+      - LABEL=Servy-Julian
+      - DIR=/scan
+      - PATTERN="scan"_dd.mm.yyyy_hh:MM:ss
+      - PUID=995
+      - PGID=994
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-julian/consume:/scan
+    restart: always
+
+  paperless-ngx-julian-redis:
+    image: docker.io/library/redis:7
+    container_name: paperless-ngx-julian-redis
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-julian-redis/data:/data
+    networks:
+      - net-paperless-ngx-julian
+
+  paperless-ngx-julian-db:
+    image: docker.io/library/postgres:15
+    container_name: paperless-ngx-julian-db
+    restart: unless-stopped
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-julian-db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: {{ vars["paperless-ngx-julian_postgres_password"] }}
+    networks:
+        - net-paperless-ngx-julian
+
+  paperless-ngx-julian:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-ngx-julian
+    restart: unless-stopped
+    depends_on:
+      - paperless-ngx-julian-db
+      - paperless-ngx-julian-redis
+    ports:
+      - 8003:8000
+    volumes:
+      - /mnt/storage/containers/paperless-ngx-julian/data:/usr/src/paperless/data
+      - /mnt/storage/containers/paperless-ngx-julian/media:/usr/src/paperless/media
+      - /mnt/storage/containers/paperless-ngx-julian/consume:/usr/src/paperless/consume
+      - /mnt/storage/containers/paperless-ngx-julian/export:/usr/src/paperless/export
+    environment:
+      - PAPERLESS_REDIS=redis://paperless-ngx-julian-redis:6379
+      - PAPERLESS_DBHOST=paperless-ngx-julian-db
+      - PAPERLESS_DBPORT=5432
+      - PAPERLESS_DBNAME=paperless
+      - PAPERLESS_DBUSER=paperless
+      - PAPERLESS_DBPASS={{ vars["paperless-ngx-julian_postgres_password"] }}
+      - PAPERLESS_OCR_LANGUAGE=deu+eng
+      - PAPERLESS_URL=https://paperless-j.{{ docker_l_hostname }}
+      - PAPERLESS_SECRET_KEY={{ vars["paperless-ngx-julian_paperless_secret_key"] }}
+      - USERMAP_UID=995
+      - USERMAP_GID=994
+    networks:
+      - net-paperless-ngx-julian
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paperless-ngx-julian.rule=Host(`paperless-j.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.paperless-ngx-julian.entrypoints=websecure"
+      - "traefik.http.routers.paperless-ngx-julian.tls.certresolver=myresolver"
+
+networks:
+  net-paperless-ngx-julian:
+    name: paperless-ngx-julian

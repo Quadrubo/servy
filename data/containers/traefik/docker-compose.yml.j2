@@ -36,11 +36,13 @@ services:
       - net-komga
       - net-scrutiny
       - net-speedtest-tracker
+      - net-stirling-pdf
       - net-uptime-kuma
       - net-linkding
       - net-traccar
       - net-dashy
       - net-paperless-ngx
+      - net-paperless-ngx-julian
       - net-gitea
       - net-arr
     ports:
@@ -107,6 +109,10 @@ networks:
   net-speedtest-tracker:
     name: speedtest-tracker
     external: true
+
+  net-stirling-pdf:
+    name: stirling-pdf
+    external: true
   
   net-uptime-kuma:
     name: uptime-kuma
@@ -126,6 +132,10 @@ networks:
 
   net-paperless-ngx:
     name: paperless-ngx
+    external: true
+
+  net-paperless-ngx-julian:
+    name: paperless-ngx-julian
     external: true
 
   net-gitea:

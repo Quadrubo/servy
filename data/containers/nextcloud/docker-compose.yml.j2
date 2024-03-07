@@ -4,8 +4,8 @@ services:
     image: lscr.io/linuxserver/nextcloud:latest
     container_name: nextcloud
     environment:
-      - PUID=99
-      - PGID=100
+      - PUID=1000
+      - PGID=1000
     volumes:
       - /mnt/storage/containers/nextcloud/config:/config
       - /mnt/storage/containers/nextcloud/data:/data

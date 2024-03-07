@@ -1,0 +1,96 @@
+source_directories:
+    # - /mnt/storage/arr (arr folder)
+    # - /mnt/storage/borg-repository (not used, only using remote backup)
+    - /mnt/storage/containers
+    - /mnt/storage/documents
+    # - /mnt/storage/domains (old vm folder, not being used)
+    # - /mnt/storage/external_backups (backups from other devices on this device)
+    # - /mnt/storage/google-photos-dl (temporary folder)
+    # - /mnt/storage/isos (isos can be downloaded again)
+    # - /mnt/storage/tmp (temporary folder)
+
+# exclude_patterns:
+#     - /mnt/user/appdata/downloads
+
+mariadb_databases:
+    - name: gitea
+      hostname: gitea-db
+      port: 3306
+      username: gitea
+      password: {{ vars["gitea_mariadb_password"] }}
+
+    - name: nextcloud
+      hostname: nextcloud-db
+      port: 3306
+      username: nextcloud
+      password: {{ vars["nextcloud_mariadb_password"] }}
+
+    - name: speedtest_tracker
+      hostname: speedtest-tracker-db
+      port: 3306
+      username: speedtest
+      password: {{ vars["speedtest-tracker_mariadb_password"] }}
+
+    - name: traccar
+      hostname: traccar-db
+      port: 3306
+      username: traccar
+      password: {{ vars["traccar_mariadb_password"] }}
+
+# Backup Destinations
+repositories:
+    - path: ssh://u333539-sub4@u333539.your-storagebox.de/./backup
+      label: Boxy
+one_file_system: true
+
+ssh_command: ssh -p 23 -i /root/.ssh/sub4
+
+
+#   Passphrase is set in variable $BORG_PASSPHRASE
+#   encryption_passphrase: "DoNotMissToChangeYourPassphrase"
+compression: lz4
+archive_name_format: 'backup-{now}'
+
+keep_hourly: 2
+keep_daily: 7
+keep_weekly: 4
+keep_monthly: 12
+keep_yearly: 10
+
+checks:
+    - name: repository
+    - name: archives
+check_last: 3
+
+before_backup:
+    - echo "Starting a backup job."
+after_backup:
+    - echo "Backup created."
+on_error:
+    - echo "Error while creating a backup."
+
+# Notifications with NTFY
+ntfy:
+    topic: borgmatic
+    server: https://ntfy.r.qudr.de
+    username: borgmatic
+    password: {{ vars["borgmatic-config_ntfy_password"] }}
+    start:
+        title: A borgmatic backup started
+        message: Watch this space...
+        tags: borgmatic
+        priority: min
+    finish:
+        title: A borgmatic backup completed successfully
+        message: Nice!
+        tags: borgmatic,+1
+        priority: min
+    fail:
+        title: A borgmatic backup failed
+        message: You should probably fix this
+        tags: borgmatic,-1,skull
+        priority: max
+    states:
+        - start
+        - finish
+        - fail

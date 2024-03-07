@@ -6,7 +6,7 @@ services:
     environment:
       - BORG_PASSPHRASE={{ borgmatic_borg_passphrase }}
     volumes:
-      - /mnt/user:/mnt/user:ro # source user
+      - /mnt/storage:/mnt/storage:ro # source storage
       - /boot:/boot:ro # source boot
       - /mnt/storage/borg-repository:/mnt/borg-repository # backup target (unused)
       - /mnt/storage/containers/borgmatic/config:/etc/borgmatic.d # borgmatic config file(s) + crontab.txt
@@ -15,13 +15,29 @@ services:
       - /mnt/storage/containers/borgmatic/ssh-keys:/root/.ssh # ssh key for remote repositories
       - /mnt/storage/containers/borgmatic/cache:/root/.cache/borg # checksums used for deduplication
     networks:
+      - net-gitea # gitea-db
       - net-nextcloud # nextcloud-db
+      - net-speedtest-tracker # speedtest-tracker-db
+      - net-traccar # traccar-db
+
     devices:
       - /dev/fuse
     cap_add:
       - SYS_ADMIN
 
 networks:
+  net-gitea:
+    name: gitea
+    external: true
+
   net-nextcloud:
     name: nextcloud
+    external: true
+
+  net-speedtest-tracker:
+    name: speedtest-tracker
+    external: true
+
+  net-traccar:
+    name: traccar
     external: true

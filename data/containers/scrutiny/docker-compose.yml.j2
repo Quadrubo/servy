@@ -11,7 +11,7 @@ services:
       # - 8086:8086 #influxDB admin
     volumes:
       - /run/udev:/run/udev:ro
-      - /mnt/u tser/storage/containers/scrutiny/config:/opt/scrutiny/config
+      - /mnt/storage/containers/scrutiny/config:/opt/scrutiny/config
       - /mnt/storage/containers/scrutiny/influxdb:/opt/scrutiny/influxdb
     devices:
       - /dev/sda

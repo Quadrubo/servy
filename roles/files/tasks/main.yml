@@ -1,0 +1,23 @@
+- name: Copy the folder structure to the remote host
+  ansible.builtin.copy:
+    src: "data/files/"
+    dest: "/"
+    mode: "0644"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  register: copied_files
+
+- name: Template the .j2 files
+  ansible.builtin.template:
+    src: "data/files{{ item }}"
+    dest: "{{ item | regex_replace('\\.j2$', '') }}"
+    mode: "0644"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  loop: "{{ template_files }}"
+
+- name: Delete the remaining .j2 files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ template_files }}"

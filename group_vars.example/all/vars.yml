@@ -75,3 +75,33 @@ docker_add_repo: true
 # pip extension configuration
 pip_install_packages:
   - name: docker
+
+# template files
+# a list of files that will be templated over
+# should be stored under data/files
+template_files:
+  - /mnt/storage/containers/borgmatic/config/config.yaml.j2
+
+# filesharing config
+filesharing_samba_folders:
+  - path: /mnt/storage/containers/paperless-ngx/consume
+    owner: paperless
+    group: samba
+
+filesharing_samba_group: samba
+
+filesharing_users:
+  - name: samba
+    groups:
+      - samba
+    shell: /sbin/nologin
+
+  - name: samba_guest
+    groups:
+      - samba
+    shell: /sbin/nologin
+
+  - name: paperless
+    groups:
+      - samba
+    shell: /sbin/nologin

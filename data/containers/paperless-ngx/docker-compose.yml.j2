@@ -1,5 +1,20 @@
 version: "3.8"
 services:
+  paperless-ngx-node-hp-scan-to:
+    image: manuc66/node-hp-scan-to:latest
+    container_name: paperless-ngx-node-hp-scan-to
+    environment:
+      - IP=192.168.5.70
+      - LABEL=Servy-Gemeinsam
+      - DIR=/scan
+      - PATTERN="scan"_dd.mm.yyyy_hh:MM:ss
+      - PUID=995
+      - PGID=994
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/paperless-ngx/consume:/scan
+    restart: always
+
   paperless-ngx-redis:
     image: docker.io/library/redis:7
     container_name: paperless-ngx-redis
@@ -46,6 +61,8 @@ services:
       - PAPERLESS_OCR_LANGUAGE=deu+eng
       - PAPERLESS_URL=https://paperless.{{ docker_l_hostname }}
       - PAPERLESS_SECRET_KEY={{ vars["paperless-ngx_paperless_secret_key"] }}
+      - USERMAP_UID=995
+      - USERMAP_GID=994
     networks:
       - net-paperless-ngx
     labels:

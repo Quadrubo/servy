@@ -1,0 +1,40 @@
+- name: Update packages
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: true
+
+- name: Install samba package
+  ansible.builtin.package:
+    name: "samba"
+    state: latest
+
+- name: Create samba group
+  ansible.builtin.group:
+    name: "{{ filesharing_samba_group }}"
+
+- name: Ensure samba users are created
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups }}"
+    shell: "{{ item.shell }}"
+    append: true
+    system: true
+  loop: "{{ filesharing_users }}"
+
+- name: Create samba folders
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "0775"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  loop: "{{ filesharing_samba_folders }}"
+
+- name: Copy the smb.conf file
+  ansible.builtin.copy:
+    src: "data/filesharing/smb.conf"
+    dest: "/etc/samba/smb.conf"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  notify: "restart samba daemon"

@@ -3,6 +3,7 @@
         "**/roles/**/*.yml": "ansible",   
         "run.yml": "ansible",
         "**/data/containers/**/*.yml.j2": "yaml",
+        "**/data/files/**/*.yaml.j2": "yaml",
     },
     "ansible.python.interpreterPath": "/bin/python3",
 }
