@@ -10,7 +10,7 @@
     groups: "{{ item.groups }}"
     append: true
     shell: "{{ item.shell }}"
-    update_password: on_create
+    update_password: always
   loop: "{{ system_users }}"
   when: item.create | default(true) | bool
 
