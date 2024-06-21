@@ -27,3 +27,6 @@ scrape_configs:
   static_configs:
   - targets:
     - node-exporter.yoga-studio27.de
+  basic_auth:
+    username: "prometheus"
+    password: "{{ prometheus_node_exporter_yogastudio27_password }}"
