@@ -1,0 +1,27 @@
+services:
+  syncthing:
+    image: syncthing/syncthing:1
+    container_name: syncthing
+    hostname: servy-syncthing
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /mnt/storage/containers/syncthing/data:/var/syncthing
+    ports:
+      - 8384:8384 # Web UI
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    restart: unless-stopped
+    networks:
+      - net-syncthing
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.syncthing.rule=Host(`syncthing.{{ docker_r_hostname }}`)"
+      - "traefik.http.routers.syncthing.entrypoints=websecure"
+      - "traefik.http.routers.syncthing.tls.certresolver=myresolver"
+
+networks:
+  net-syncthing:
+    name: syncthing

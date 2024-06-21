@@ -1,8 +1,6 @@
-version: '3'
-
 services:
   traefik:
-    image: "traefik:v2.10"
+    image: traefik:v3.0
     container_name: "traefik"
     command:
       - "--log.level=DEBUG"
@@ -25,8 +23,11 @@ services:
       - net-dockge
       - net-jellyfin
       - net-hemmelig
+      # - net-hoppscotch
       - net-silverbullet
       ## - net-immich
+      - net-monitoring
+      - net-n8n
       - net-nextcloud
       - net-ntfy
       - net-tvheadend
@@ -37,13 +38,16 @@ services:
       - net-scrutiny
       - net-speedtest-tracker
       - net-stirling-pdf
+      - net-syncthing
       - net-uptime-kuma
       - net-linkding
       - net-traccar
+      - net-traggo
       - net-dashy
       - net-paperless-ngx
       - net-paperless-ngx-julian
       - net-paperless-ngx-lara
+      - net-plane
       - net-gitea
       - net-arr
     ports:
@@ -53,6 +57,7 @@ services:
     volumes:
       - "/mnt/storage/containers/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
 
 networks:
   net-dockge:
@@ -67,6 +72,10 @@ networks:
     name: hemmelig
     external: true
 
+  # net-hoppscotch:
+  #   name: hoppscotch
+  #   external: true
+
   net-silverbullet:
     name: silverbullet
     external: true
@@ -74,6 +83,14 @@ networks:
   # net-immich:
   #   name: immich
   #   external: true
+
+  net-monitoring:
+    name: monitoring
+    external: true
+
+  net-n8n:
+    name: n8n
+    external: true
 
   net-nextcloud:
     name: nextcloud
@@ -114,6 +131,10 @@ networks:
   net-stirling-pdf:
     name: stirling-pdf
     external: true
+
+  net-syncthing:
+    name: syncthing
+    external: true
   
   net-uptime-kuma:
     name: uptime-kuma
@@ -125,6 +146,10 @@ networks:
 
   net-traccar:
     name: traccar
+    external: true
+
+  net-traggo:
+    name: traggo
     external: true
 
   net-dashy:
@@ -141,6 +166,10 @@ networks:
 
   net-paperless-ngx-lara:
     name: paperless-ngx-lara
+    external: true
+
+  net-plane:
+    name: plane
     external: true
 
   net-gitea:

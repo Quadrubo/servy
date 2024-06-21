@@ -1,6 +1,7 @@
-version: '3'
 services:
   actual-server:
+    # Pinning to a specific major version is not possible
+    # @see https://actualbudget.org/docs/install/docker/
     image: docker.io/actualbudget/actual-server:latest
     container_name: actual-server
     ports:

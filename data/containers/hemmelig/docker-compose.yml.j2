@@ -1,7 +1,9 @@
-version: "3.8"
 services:
   hemmelig:
-    image: hemmeligapp/hemmelig:v5.19.5 # https://github.com/HemmeligOrg/Hemmelig.app/tags
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/hemmeligapp/hemmelig/tags
+    image: hemmeligapp/hemmelig:latest
+    container_name: hemmelig
     hostname: hemmelig
     init: true
     volumes:
@@ -20,7 +22,7 @@ services:
       - SECRET_MAX_TEXT_SIZE=256 # max text size in kb
     ports:
       - "8103:3000"
-    restart: always
+    restart: unless-stopped
     stop_grace_period: 1m
     healthcheck:
       test: "wget -O /dev/null localhost:3000 || exit 1"

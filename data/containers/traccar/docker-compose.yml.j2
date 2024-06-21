@@ -1,7 +1,6 @@
-version: "3.8"
 services:
   traccar:
-    image: traccar/traccar:latest
+    image: traccar/traccar:6-alpine
     container_name: traccar
     hostname: traccar
     ports:
@@ -11,7 +10,7 @@ services:
     volumes:
       - /mnt/storage/containers/traccar/logs:/opt/traccar/logs:rw
       - /mnt/storage/containers/traccar/traccar.xml:/opt/traccar/conf/traccar.xml:ro
-    restart: always
+    restart: unless-stopped
     networks:
       - net-traccar
     labels:
@@ -22,7 +21,7 @@ services:
       - "traefik.http.services.traccar.loadbalancer.server.port=8082"
 
   traccar-db:
-    image: mariadb:10
+    image: mariadb:11
     container_name: traccar-db
     environment:
       - TCP_PORT_3306=3306
@@ -32,6 +31,7 @@ services:
       - MARIADB_PASSWORD={{ traccar_mariadb_password }}
     volumes:
       - /mnt/storage/containers/traccar-db/mysql:/var/lib/mysql
+    restart: unless-stopped
     networks:
       - net-traccar
 

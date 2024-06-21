@@ -1,0 +1,13 @@
+route:
+  receiver: "ntfy"
+  group_interval: 1m
+  repeat_interval: 5m
+
+receivers:
+  - name: "ntfy"
+    webhook_configs:
+      - url: "http://ntfy-alertmanager:8080"
+        http_config:
+          basic_auth:
+            username: "webhookUser"
+            password: {{ vars["ntfy-alertmanager_webhook_password"] }}

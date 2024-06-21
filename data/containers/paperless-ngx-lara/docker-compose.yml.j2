@@ -1,6 +1,7 @@
-version: "3.8"
 services:
   paperless-ngx-lara-node-hp-scan-to:
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/manuc66/node-hp-scan-to/tags
     image: manuc66/node-hp-scan-to:latest
     container_name: paperless-ngx-lara-node-hp-scan-to
     environment:
@@ -13,10 +14,10 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/storage/containers/paperless-ngx-lara/consume:/scan
-    restart: always
+    restart: unless-stopped
 
   paperless-ngx-lara-redis:
-    image: docker.io/library/redis:7
+    image: redis:7
     container_name: paperless-ngx-lara-redis
     restart: unless-stopped
     volumes:
@@ -25,7 +26,7 @@ services:
       - net-paperless-ngx-lara
 
   paperless-ngx-lara-db:
-    image: docker.io/library/postgres:15
+    image: postgres:15
     container_name: paperless-ngx-lara-db
     restart: unless-stopped
     volumes:
@@ -38,6 +39,8 @@ services:
         - net-paperless-ngx-lara
 
   paperless-ngx-lara:
+    # Pinning to a specific major version is not possible
+    # @see https://github.com/paperless-ngx/paperless-ngx/pkgs/container/paperless-ngx/versions?filters%5Bversion_type%5D=tagged
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: paperless-ngx-lara
     restart: unless-stopped

@@ -1,0 +1,64 @@
+# Public facing base URL of the service (e.g. https://ntfy-alertmanager.xenrox.net)
+# This setting is required for the "Silence" feature.
+base-url https://ntfy-alertmanager.l.qudr.de
+# http listen address
+http-address :8080
+# Log level (either debug, info, warning, error)
+log-level info
+# Log format (either text or json)
+log-format text
+# When multiple alerts are grouped together by Alertmanager, they can either be sent
+# each on their own (single mode) or be kept together (multi mode) (either single or multi; default is multi)
+alert-mode single
+# Optionally protect with HTTP basic authentication
+user webhookUser
+password {{ vars["ntfy-alertmanager_webhook_password"] }}
+
+labels {
+    order "severity"
+
+    severity "critical" {
+        priority 4
+    }
+
+    severity "warning" {
+        priority 3
+    }
+
+    severity "info" {
+        priority 1
+    }
+}
+
+# Settings for resolved alerts
+resolved {
+    tags "resolved"
+}
+
+ntfy {
+    # URL of the ntfy topic - required
+    topic https://ntfy.r.qudr.de/alertmanager
+    # ntfy authentication via Basic Auth (https://docs.ntfy.sh/publish/#username-password)
+    user alertmanager
+    password {{ vars["ntfy-alertmanager_ntfy_password"] }}
+    # ntfy authentication via access tokens (https://docs.ntfy.sh/publish/#access-tokens)
+    # Either access-token or a user/password combination can be used - not both.
+    # access-token foobar
+}
+
+alertmanager {
+    user alertmanager
+    password {{ vars["ntfy-alertmanager_alertmanager_password"] }}
+    # By default the Alertmanager URL gets parsed from the webhook. In case that
+    # Alertmanger is not reachable under that URL, it can be overwritten here.
+    url https://alertmanager.l.qudr.de
+}
+
+# When the alert-mode is set to single, ntfy-alertmanager will cache each single alert
+# to avoid sending recurrences.
+cache {
+    # The type of cache that will be used (either disabled, memory or redis; default is disabled).
+    type memory
+    # How long messages stay in the cache for
+    duration 24h
+}

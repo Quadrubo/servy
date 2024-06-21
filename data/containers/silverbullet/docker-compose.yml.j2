@@ -1,7 +1,9 @@
-version: '3.8'
 services:
   silverbullet:
-    image: zefhemel/silverbullet
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/zefhemel/silverbullet/tags
+    image: zefhemel/silverbullet:latest
+    container_name: silverbullet
     restart: unless-stopped
     environment:
       - SB_USER={{ silverbullet_username }}:{{ silverbullet_password }}

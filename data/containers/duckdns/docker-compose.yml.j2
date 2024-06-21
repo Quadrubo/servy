@@ -1,10 +1,12 @@
-version: "3.8"
 services:
   duckdns:
-    image: lscr.io/linuxserver/duckdns
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/duckdns?tab=tags
+    image: lscr.io/linuxserver/duckdns:latest
     container_name: duckdns
     environment:
       - SUBDOMAINS=quadrubo
       - TOKEN={{ duckdns_token }}
     volumes:
       - /mnt/storage/containers/duckdns/config:/config
+    restart: unless-stopped

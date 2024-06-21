@@ -1,6 +1,7 @@
-version: "3.8"
 services:
   onlyoffice-documentserver:
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/onlyoffice/documentserver/tags
     image: onlyoffice/documentserver:latest
     container_name: onlyoffice-documentserver
     environment:
@@ -10,6 +11,7 @@ services:
       - /mnt/storage/containers/onlyoffice-documentserver/logs:/var/log/onlyoffice
       - /mnt/storage/containers/onlyoffice-documentserver/Data:/var/www/onlyoffice/Data
       - /mnt/storage/containers/onlyoffice-documentserver/fonts:/usr/share/fonts
+    restart: unless-stopped
     networks:
       - net-nextcloud
     labels:

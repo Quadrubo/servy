@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   gluetun:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:v3
     container_name: gluetun # necessary for other containers to connect
     cap_add:
       - NET_ADMIN
@@ -26,6 +25,7 @@ services:
       - WIREGUARD_PRIVATE_KEY={{ gluetun_wireguard_private_key }}
       - WIREGUARD_ADDRESSES={{ gluetun_wireguard_addresses }}
       - SERVER_CITIES=Madrid
+    restart: unless-stopped
     networks:
       - net-arr
     labels:
@@ -67,6 +67,8 @@ services:
       - "traefik.http.routers.kapowarr.tls.certresolver=myresolver"
 
   sabnzbd:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/sabnzbd?tab=tags
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
     environment:
@@ -95,6 +97,8 @@ services:
     # - audio
 
   radarr:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/radarr?tab=tags
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
@@ -120,6 +124,8 @@ services:
     # category: movies
 
   sonarr:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/sonarr?tab=tags
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
@@ -145,6 +151,8 @@ services:
     # category: tv
 
   readarr:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/radarr?tab=tags
     image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
     environment:
@@ -170,6 +178,8 @@ services:
     # category: books
 
   kapowarr:
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/mrcas/kapowarr/tags
     image: mrcas/kapowarr:latest
     container_name: kapowarr
     environment:

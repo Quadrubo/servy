@@ -10,7 +10,7 @@ You can read the [setup instructions for my proxmox server](PROXMOX.md) to get s
 
 ### Installing Ansible
 
-Follow  the [official installation guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) to install ansible on your system. I installed Ansible using pip to get the latest version.
+Follow the [official installation guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) to install ansible on your system. I installed Ansible using pip to get the latest version.
 Afterwards, clone the repository to a directory of your choice.
 
 ```shell
@@ -62,7 +62,7 @@ For a physical sector size of `4096 bytes` it should be `12` because `2^12=4096`
 After testing your connection, you can run the ansible playbook to bring the server back to state.
 
 ```shell
-ansible-playbook run.yml -K --ask-vault-pass
+docker compose run --rm ansible ansible-playbook run.yml -K --ask-vault-pass
 ```
 
 You may omit `-K` if passwordless sudo is enabled on the server.

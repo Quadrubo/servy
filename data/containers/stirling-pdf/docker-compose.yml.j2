@@ -1,7 +1,9 @@
-version: "3.8"
 services:
   stirling-pdf:
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/frooodle/s-pdf/tags
     image: frooodle/s-pdf:latest
+    container_name: stirling-pdf
     ports:
       - '8105:8080'
     volumes:
@@ -13,6 +15,7 @@ services:
 #      - /location/of/logs:/logs/
     environment:
       - DOCKER_ENABLE_SECURITY=false
+    restart: unless-stopped
     networks:
       - net-stirling-pdf
     labels:

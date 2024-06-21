@@ -1,6 +1,7 @@
-version: "3.8"
 services:
   scrutiny:
+    # Pinning to a specific major version is not possible
+    # @see https://github.com/AnalogJ/scrutiny/pkgs/container/scrutiny/versions?filters%5Bversion_type%5D=tagged
     image: ghcr.io/analogj/scrutiny:master-omnibus
     container_name: scrutiny
     cap_add:
@@ -20,6 +21,7 @@ services:
       - /dev/sdd
       - /dev/nvme0n1
       - /dev/nvme1n1
+    restart: unless-stopped
     networks:
       - net-scrutiny
     labels:

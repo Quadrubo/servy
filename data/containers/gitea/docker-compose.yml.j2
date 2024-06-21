@@ -1,8 +1,7 @@
-version: "3.8"
 
 services:
   gitea:
-    image: gitea/gitea:1.21.4
+    image: gitea/gitea:1
     container_name: gitea
     environment:
       - USER_UID=1000
@@ -12,7 +11,7 @@ services:
       - GITEA__database__NAME=gitea
       - GITEA__database__USER=gitea
       - GITEA__database__PASSWD={{ gitea_mariadb_password }}
-    restart: always
+    restart: unless-stopped
     volumes:
       - /mnt/storage/containers/gitea/data:/data
       - /etc/timezone:/etc/timezone:ro
@@ -32,9 +31,9 @@ services:
       - "traefik.http.services.gitea.loadbalancer.server.port=3000"
 
   gitea-db:
-    image: mariadb:10
+    image: mariadb:11
     container_name: gitea-db
-    restart: always
+    restart: unless-stopped
     environment:
       - MARIADB_DATABASE=gitea
       - MARIADB_USER=gitea

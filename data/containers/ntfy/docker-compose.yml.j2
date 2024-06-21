@@ -1,7 +1,8 @@
-version: "3.8"
 services:
   ntfy:
-    image: binwiederhier/ntfy
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/binwiederhier/ntfy/tags
+    image: binwiederhier/ntfy:latest
     container_name: ntfy
     command:
       - serve

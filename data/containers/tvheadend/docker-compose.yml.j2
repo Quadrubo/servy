@@ -1,6 +1,7 @@
-version: '3.8'
 services:
   tvheadend:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/tvheadend?tab=tags
     image: lscr.io/linuxserver/tvheadend
     container_name: tvheadend
     environment:

@@ -1,6 +1,7 @@
-version: "3.8"
 services:
   freshrss:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/freshrss?tab=tags
     image: lscr.io/linuxserver/freshrss:latest
     container_name: freshrss
     environment:

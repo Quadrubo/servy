@@ -31,13 +31,6 @@ system_users:
 system_groups:
   - docker
   - samba
-
-# ssh configuration
-# you can add as many ssh keys as you like here
-# make sure you created them first
-ssh_keys:
-  - user: julian
-    path: .ssh/julian.pub
     
 # system configuration
 system_username: ansible

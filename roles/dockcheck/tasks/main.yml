@@ -1,0 +1,5 @@
+- name: Download dockcheck.sh using get_url
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/mag37/dockcheck/main/dockcheck.sh
+    dest: /usr/local/bin/dockcheck.sh
+    mode: "0755"

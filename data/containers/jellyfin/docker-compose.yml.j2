@@ -1,17 +1,16 @@
-version: "3.8"
 services:
   jellyfin:
-    image: jellyfin/jellyfin
+    image: jellyfin/jellyfin:10
     container_name: jellyfin
     # user: 1000:1000
     # TODO: find out if this is necessary
-    # group_add:
-    #   - "104"
+    group_add:
+      - "104"
     volumes:
       - /mnt/storage/containers/jellyfin/config:/config
       - /mnt/storage/containers/jellyfin/cache:/cache
       - /mnt/storage/arr/media:/media:ro
-    restart: 'unless-stopped'
+    restart: unless-stopped
     environment:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.{{ docker_l_hostname }}
     ports:

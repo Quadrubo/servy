@@ -9,6 +9,9 @@ traefik_cf_dns_api_token: "xxx"
 # hemmelig 
 hemmelig_secret_jwt_secret: "xxx" # can not include $
 
+# n8n
+n8n_postgres_password: "xxx"
+
 # actual-server
 actual-server_actual_nordigen_secret_id: "xxx"
 actual-server_actual_nordigen_secret_key: "xxx"
@@ -37,6 +40,9 @@ silverbullet_password: "xxx"
 # speedtest-tracker
 speedtest-tracker_mariadb_password: "xxx"
 speedtest-tracker_app_key: "xxx"
+
+# traggo
+traggo_default_user_pass: "xxx"
 
 # wikijs
 wikijs_postgres_password: "xxx"

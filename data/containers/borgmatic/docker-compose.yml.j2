@@ -1,7 +1,8 @@
-version: "3.8"
 services:
   borgmatic:
-    image: ghcr.io/borgmatic-collective/borgmatic
+    # Pinning to a specific major version is not possible
+    # @see https://github.com/borgmatic-collective/docker-borgmatic/pkgs/container/borgmatic
+    image: ghcr.io/borgmatic-collective/borgmatic:latest
     container_name: borgmatic
     environment:
       - BORG_PASSPHRASE={{ borgmatic_borg_passphrase }}
@@ -14,6 +15,7 @@ services:
       - /mnt/storage/containers/borgmatic/keys:/root/.config/borg # config and keyfiles
       - /mnt/storage/containers/borgmatic/ssh-keys:/root/.ssh # ssh key for remote repositories
       - /mnt/storage/containers/borgmatic/cache:/root/.cache/borg # checksums used for deduplication
+    restart: unless-stopped
     networks:
       - net-gitea # gitea-db
       - net-nextcloud # nextcloud-db

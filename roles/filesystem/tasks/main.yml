@@ -19,3 +19,11 @@
   when: _zfs_facts_task.ansible_facts.ansible_zfs_datasets[0].mountpoint != "/mnt/storage"
   become: true
   ansible.builtin.command: "zfs set mountpoint={{ filesystem_zfs_pool_mountpoint }} {{ filesystem_zfs_pool_name }}"
+
+- name: Mount docker drive
+  ansible.posix.mount:
+    path: /mnt/docker
+    src: UUID=0b184fad-653f-47f4-96c0-b14b9c37b6bb
+    fstype: ext4
+    opts: defaults
+    state: mounted

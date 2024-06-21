@@ -9,9 +9,15 @@
     - { key: "PasswordAuthentication", value: "no" }
   notify: "restart ssh daemon"
 
-- name: Copy ssh keys
+- name: Fetch ssh keys from github
+  ansible.builtin.uri:
+    url: "https://github.com/Quadrubo.keys"
+    return_content: true
+  register: github_keys
+
+- name: Ensure ssh keys from github are copied
   ansible.posix.authorized_key:
-    user: "{{ item.user }}"
+    user: "julian"
     state: present
-    key: "{{ lookup('file', item.path) }}"
-  loop: "{{ ssh_keys }}"
+    key: "{{ item }}"
+  loop: "{{ github_keys.content.splitlines() }}"

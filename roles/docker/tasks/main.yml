@@ -14,7 +14,7 @@
 
 - name: Create the container directories
   ansible.builtin.file:
-    path: "/srv/containers/{{ item }}"
+    path: "/srv/containers/{{ item.name }}"
     state: directory
     mode: "0744"
     owner: "{{ system_username }}"
@@ -32,16 +32,46 @@
 
 - name: Template & copy the compose files
   ansible.builtin.template:
-    src: "data/containers/{{ item }}/docker-compose.yml.j2"
-    dest: "/srv/containers/{{ item }}/docker-compose.yml"
+    src: "data/containers/{{ item.name }}/docker-compose.yml.j2"
+    dest: "/srv/containers/{{ item.name }}/docker-compose.yml"
     mode: "0644"
     owner: "{{ system_username }}"
     group: "{{ system_username }}"
   loop: "{{ docker_containers }}"
 
-- name: Test docker-compose
+- name: Ensure all folders for additional container data are created
+  ansible.builtin.file:
+    path: "{{ item.1.dest_path }}"
+    state: directory
+    mode: "0744"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  with_subelements:
+    - "{{ docker_containers | selectattr('files', 'defined') }}" # Loop over files attribute if defined
+    - files
+
+- name: Template & copy container files
+  ansible.builtin.template:
+    src: "data/containers/{{ item.0.name }}/{{ item.1.src_path }}/{{ item.1.src_name }}"
+    dest: "{{ item.1.dest_path }}/{{ item.1.dest_name }}"
+    mode: "0744"
+    owner: "{{ system_username }}"
+    group: "{{ system_username }}"
+  with_subelements:
+    - "{{ docker_containers | selectattr('files', 'defined') }}" # Loop over files attribute if defined
+    - files
+
+# - name: Bring the containers down
+#   community.docker.docker_compose_v2:
+#     project_src: "/srv/containers/{{ item.name }}"
+#     state: absent
+#   loop: "{{ docker_containers }}"
+#   become: true
+#   become_user: ansible
+
+- name: Bring the containers up
   community.docker.docker_compose_v2:
-    project_src: "/srv/containers/{{ item }}"
+    project_src: "/srv/containers/{{ item.name }}"
     state: present
   loop: "{{ docker_containers }}"
   become: true

@@ -1,10 +1,11 @@
-version: "3.8"
 services:
   linkding:
-    container_name: linkding
+    # Pinning to a specific major version is not possible
+    # @see https://hub.docker.com/r/sissbruecker/linkding/tags
     image: sissbruecker/linkding:latest
+    container_name: linkding
     ports:
-        - 9090:9090
+        - 9091:9090
     volumes:
         - /mnt/storage/containers/linkding/data:/etc/linkding/data
     restart: unless-stopped

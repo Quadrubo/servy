@@ -1,6 +1,7 @@
-version: "3.8"
 services:
   nextcloud:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/nextcloud?tab=tags
     image: lscr.io/linuxserver/nextcloud:latest
     container_name: nextcloud
     environment:
@@ -12,6 +13,7 @@ services:
     depends_on:
       - nextcloud-db
       - nextcloud-redis
+    restart: unless-stopped
     networks:
       - net-nextcloud
     labels:
@@ -21,6 +23,8 @@ services:
       - "traefik.http.routers.nextcloud.tls.certresolver=myresolver"
 
   nextcloud-db:
+    # Nextcloud doesn't recommend mariadb:11 yet
+    # @see https://docs.nextcloud.com/server/latest/admin_manual/installation/system_requirements.html
     image: mariadb:10
     container_name: nextcloud-db
     environment:
@@ -31,14 +35,16 @@ services:
       - MARIADB_PASSWORD={{ nextcloud_mariadb_password }}
     volumes:
       - /mnt/storage/containers/nextcloud-db/mysql:/var/lib/mysql
+    restart: unless-stopped
     networks:
       - net-nextcloud
 
   nextcloud-redis:
-    image: redis
+    image: redis:latest
     container_name: nextcloud-redis
     environment:
       - TCP_PORT_6379=6379
+    restart: unless-stopped
     networks:
       - net-nextcloud
 

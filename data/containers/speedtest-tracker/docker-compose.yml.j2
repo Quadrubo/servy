@@ -1,6 +1,7 @@
-version: "3.8"
 services:
   speedtest-tracker:
+    # Pinning to a specific major version is not possible
+    # @see https://quay.io/repository/linuxserver.io/speedtest-tracker?tab=tags
     image: lscr.io/linuxserver/speedtest-tracker:latest
     container_name: speedtest-tracker
     ports:
@@ -31,9 +32,9 @@ services:
       - "traefik.http.routers.speedtest-tracker.tls.certresolver=myresolver"
 
   speedtest-tracker-db:
-    image: mariadb:10
+    image: mariadb:11
     container_name: speedtest-tracker-db
-    restart: always
+    restart: unless-stopped
     environment:
       - MARIADB_DATABASE=speedtest_tracker
       - MARIADB_USER=speedtest
