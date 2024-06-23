@@ -30,3 +30,10 @@ scrape_configs:
   basic_auth:
     username: "prometheus"
     password: "{{ prometheus_node_exporter_yogastudio27_password }}"
+- job_name: publy
+  static_configs:
+  - targets:
+    - node-exporter.julweb.dev
+  basic_auth:
+    username: "prometheus"
+    password: "{{ prometheus_node_exporter_publy_password }}"
