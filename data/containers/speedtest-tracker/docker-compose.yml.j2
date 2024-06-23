@@ -18,6 +18,7 @@ services:
       - DB_USERNAME=speedtest
       - DB_PASSWORD={{ vars["speedtest-tracker_mariadb_password"] }}
       - APP_KEY={{ vars["speedtest-tracker_app_key"] }}
+      - SPEEDTEST_SCHEDULE=0 4 * * *
     volumes:
       - /mnt/storage/containers/speedtest-tracker/config:/config
     restart: unless-stopped
