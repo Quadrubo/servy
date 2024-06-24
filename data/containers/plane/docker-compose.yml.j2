@@ -79,7 +79,7 @@ services:
       - net-plane
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.plane-space.rule=Host(`plane.{{ docker_r_hostname }}` && PathPrefix(`/spaces`))"
+      - "traefik.http.routers.plane-space.rule=Host(`plane.{{ docker_r_hostname }}`) && PathPrefix(`/spaces`)"
       - "traefik.http.routers.plane-space.entrypoints=websecure"
       - "traefik.http.routers.plane-space.tls.certresolver=myresolver"
 
@@ -213,7 +213,7 @@ services:
       - net-plane
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.plane-minio.rule=Host(`plane.{{ docker_r_hostname }}` && PathPrefix(`/uploads`))"
+      - "traefik.http.routers.plane-minio.rule=Host(`plane.{{ docker_r_hostname }}`) && PathPrefix(`/uploads`)"
       - "traefik.http.routers.plane-minio.entrypoints=websecure"
       - "traefik.http.routers.plane-minio.tls.certresolver=myresolver"
 
