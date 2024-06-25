@@ -1,84 +1,59 @@
 services:
-  # The service that spins up all 3 services at once in one container
-  # This service runs the backend app in the port 3170
-  hoppscotch-backend:
-    container_name: hoppscotch-backend
-    image: hoppscotch/hoppscotch-backend
+  hoppscotch-aio:
+    image: 'hoppscotch/hoppscotch:latest'
+    container_name: hoppscotch-aio
+    networks:
+      - net-hoppscotch
+    labels:
+      # Create http to https middleware
+      - 'traefik.enable=true'
+      - 'traefik.http.middlewares.hoppscotch-redirect.redirectscheme.scheme=https'
+      - 'traefik.http.middlewares.hoppscotch-redirect.redirectscheme.permanent=true'
+      # cors middleware
+      - 'traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type, Authorization, X-Requested-With'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://hoppscotch.l.qudr.de,https://hoppscotch-admin.l.qudr.de'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolmaxage=100'
+      - 'traefik.http.middlewares.cors.headers.addvaryheader=true'
+      # front-end https route
+      - 'traefik.http.routers.hoppscotch.rule=Host(`hoppscotch.l.qudr.de`)'
+      - 'traefik.http.services.hoppscotch.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.hoppscotch.tls.certresolver=myresolver'
+      - 'traefik.http.routers.hoppscotch.entrypoints=websecure'
+      - 'traefik.http.routers.hoppscotch.tls=true'
+      - 'traefik.http.routers.hoppscotch.service=hoppscotch'
+      - 'traefik.http.routers.hoppscotch.middlewares=cors'
+      # admin dashboard https route
+      - 'traefik.http.routers.hoppscotch-admin.rule=Host(`hoppscotch-admin.l.qudr.de`)'
+      - 'traefik.http.services.hoppscotch-admin.loadbalancer.server.port=3100'
+      - 'traefik.http.routers.hoppscotch.tls.certresolver=myresolver'
+      - 'traefik.http.routers.hoppscotch-admin.entrypoints=websecure'
+      - 'traefik.http.routers.hoppscotch-admin.tls=true'
+      - 'traefik.http.routers.hoppscotch-admin.service=hoppscotch-admin'
+      - 'traefik.http.routers.hoppscotch-admin.middlewares=cors'
+      # back-end https route
+      - 'traefik.http.routers.hoppscotch-backend.rule=Host(`hoppscotch-backend.l.qudr.de`)'
+      - 'traefik.http.services.hoppscotch-backend.loadbalancer.server.port=3170'
+      - 'traefik.http.routers.hoppscotch.tls.certresolver=myresolver'
+      - 'traefik.http.routers.hoppscotch-backend.tls=true'
+      - 'traefik.http.routers.hoppscotch-backend.entrypoints=websecure'
+      - 'traefik.http.routers.hoppscotch-backend.service=hoppscotch-backend'
+      - 'traefik.http.routers.hoppscotch-backend.middlewares=cors'
     env_file:
       - ./.env
     restart: always
-    environment:
-      # Edit the below line to match your PostgresDB URL if you have an outside DB (make sure to update the .env file as well)
-      - DATABASE_URL=postgresql://postgres:{{ hoppscotch_postgres_password }}@hoppscotch-db:5432/hoppscotch?connect_timeout=300
-      - PORT=8080
-    volumes:
-      # Uncomment the line below when modifying code. Only applicable when using the "dev" target.
-      # - ./packages/hoppscotch-backend/:/usr/src/app
-      - /usr/src/app/node_modules/
     depends_on:
       hoppscotch-db:
         condition: service_healthy
     ports:
-      - "3180:80"
-      - "3170:3170"
-    networks:
-      - net-hoppscotch
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.hoppscotch-backend.rule=Host(`hoppscotch-backend.{{ docker_l_hostname }}`)"
-      - "traefik.http.routers.hoppscotch-backend.entrypoints=websecure"
-      - "traefik.http.routers.hoppscotch-backend.tls.certresolver=myresolver"
-
-  # The main hoppscotch app. This will be hosted at port 3000
-  # NOTE: To do TLS or play around with how the app is hosted, you can look into the Caddyfile for
-  #       the SH admin dashboard server at packages/hoppscotch-selfhost-web/Caddyfile
-  hoppscotch-app:
-    container_name: hoppscotch-app
-    image: hoppscotch/hoppscotch-frontend
-    env_file:
-      - ./.env
-    depends_on:
-      - hoppscotch-backend
-    ports:
-      - "3080:80"
       - "3000:3000"
-    networks:
-      - net-hoppscotch
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.hoppscotch.rule=Host(`hoppscotch.{{ docker_l_hostname }}`)"
-      - "traefik.http.routers.hoppscotch.entrypoints=websecure"
-      - "traefik.http.routers.hoppscotch.tls.certresolver=myresolver"
-
-
-  # The Self Host dashboard for managing the app. This will be hosted at port 3100
-  # NOTE: To do TLS or play around with how the app is hosted, you can look into the Caddyfile for
-  #       the SH admin dashboard server at packages/hoppscotch-sh-admin/Caddyfile
-  hoppscotch-sh-admin:
-    container_name: hoppscotch-sh-admin
-    image: hoppscotch/hoppscotch-admin
-    env_file:
-      - ./.env
-    depends_on:
-      - hoppscotch-backend
-    ports:
-      - "3280:80"
       - "3100:3100"
-    networks:
-      - net-hoppscotch
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.hoppscotch-admin.rule=Host(`hoppscotch-admin.{{ docker_l_hostname }}`)"
-      - "traefik.http.routers.hoppscotch-admin.entrypoints=websecure"
-      - "traefik.http.routers.hoppscotch-admin.tls.certresolver=myresolver"
+      - "3170:3170"
 
-    
-  # The preset DB service, you can delete/comment the below lines if
-  # you are using an external postgres instance
-  # This will be exposed at port 5432
   hoppscotch-db:
-    container_name: hoppscotch-db
     image: postgres:15
+    container_name: hoppscotch-db
     ports:
       - "5432:5432"
     environment:
