@@ -50,6 +50,7 @@ services:
       - net-plane
       - net-gitea
       - net-arr
+      - net-yaade
     ports:
       - "80:80"
       - "443:443"
@@ -178,4 +179,8 @@ networks:
 
   net-arr:
     name: arr
+    external: true
+
+  net-yaade:
+    name: yaade
     external: true

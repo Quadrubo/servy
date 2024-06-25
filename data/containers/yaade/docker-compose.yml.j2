@@ -1,0 +1,22 @@
+services:
+  yaade:
+    image: esperotech/yaade:latest
+    container_name: yaade
+    environment:
+      - YAADE_ADMIN_USERNAME=admin
+    volumes:
+      - /mnt/storage/containers/yaade/data:/app/data
+    ports:
+      - 9339:9339
+    restart: unless-stopped
+    networks:
+      - net-yaade
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.yaade.rule=Host(`yaade.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.yaade.entrypoints=websecure"
+      - "traefik.http.routers.yaade.tls.certresolver=myresolver"
+
+networks:
+  net-yaade:
+    name: yaade
