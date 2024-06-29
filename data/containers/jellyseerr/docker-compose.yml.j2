@@ -1,0 +1,23 @@
+services:
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/containers/jellyseerr/config:/app/config
+    ports:
+      - 5255:5055
+    restart: unless-stopped
+    networks:
+      - net-jellyseerr
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.jellyseerr.entrypoints=websecure"
+      - "traefik.http.routers.jellyseerr.tls.certresolver=myresolver"
+
+networks:
+  net-jellyseerr:
+    name: jellyseerr
