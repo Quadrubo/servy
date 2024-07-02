@@ -14,6 +14,8 @@ services:
       - 7878:7878 # radarr
       - 8989:8989 # sonarr
       - 8787:8787 # readarr
+      - 5656:5656 # kapowarr
+      - 5800:5800 # firefox-vpn
     volumes:
       - /mnt/storage/containers/gluetun:/gluetun
     environment:
@@ -65,6 +67,13 @@ services:
       - "traefik.http.routers.kapowarr.service=kapowarr"
       - "traefik.http.routers.kapowarr.entrypoints=websecure"
       - "traefik.http.routers.kapowarr.tls.certresolver=myresolver"
+
+      # firefox-vpn
+      - "traefik.http.routers.firefox-vpn.rule=Host(`firefox-vpn.{{ docker_l_hostname }}`)"
+      - "traefik.http.services.firefox-vpn.loadbalancer.server.port=5800"
+      - "traefik.http.routers.firefox-vpn.service=firefox-vpn"
+      - "traefik.http.routers.firefox-vpn.entrypoints=websecure"
+      - "traefik.http.routers.firefox-vpn.tls.certresolver=myresolver"
 
   sabnzbd:
     # Pinning to a specific major version is not possible
@@ -206,6 +215,18 @@ services:
 
     # download clients -> sabnzbd
     # category: comics
+
+  firefox-vpn:
+    image: jlesage/firefox
+    container_name: firefox-vpn
+    volumes:
+      - /mnt/storage/containers/firefox-vpn/config:/config
+    # ports:
+    #   - 5800:5800
+    restart: unless-stopped
+    network_mode: container:gluetun
+    depends_on:
+      - gluetun
 
 networks:
   net-arr:
