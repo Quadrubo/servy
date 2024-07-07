@@ -1,0 +1,40 @@
+services:
+  obsidian-livesync:
+    image: couchdb:latest
+    container_name: obsidian-livesync
+    environment:
+        - COUCHDB_USER={{ vars["obsidian-livesync_couchdb_user"] }}
+        - COUCHDB_PASSWORD={{ vars["obsidian-livesync_couchdb_password"] }}
+    volumes:
+        - /mnt/storage/containers/obsidian-livesync/data:/opt/couchdb/data
+        - /mnt/storage/containers/obsidian-livesync/etc:/opt/couchdb/etc/local.d
+    ports:
+        - 5984:5984
+    restart: always
+    networks:
+      - net-obsidian-livesync
+    labels:
+      - "traefik.enable=true"
+      #
+      # - "traefik.docker.network=proxy"
+      #
+      - "traefik.http.routers.obsidian-livesync.rule=Host(`obsidian-livesync.{{ docker_r_hostname }}`)"
+      #
+      - "traefik.http.routers.obsidian-livesync.entrypoints=websecure"
+      - "traefik.http.routers.obsidian-livesync.service=obsidian-livesync"
+      - "traefik.http.services.obsidian-livesync.loadbalancer.server.port=5984"
+      - "traefik.http.routers.obsidian-livesync.tls=true"
+      #
+      - "traefik.http.routers.obsidian-livesync.middlewares=obsidiancors"
+      - "traefik.http.routers.obsidian-livesync.tls.certresolver=myresolver"
+      #
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowmethods=GET,PUT,POST,HEAD,DELETE"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolallowheaders=accept,authorization,content-type,origin,referer"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolalloworiginlist=app://obsidian.md,capacitor://localhost,http://localhost"
+      - "traefik.http.middlewares.obsidiancors.headers.accesscontrolmaxage=3600"
+      - "traefik.http.middlewares.obsidiancors.headers.addvaryheader=true"
+      - "traefik.http.middlewares.obsidiancors.headers.accessControlAllowCredentials=true"
+
+networks:
+  net-obsidian-livesync:
+    name: obsidian-livesync
