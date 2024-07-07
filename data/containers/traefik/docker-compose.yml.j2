@@ -17,6 +17,8 @@ services:
       - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.myresolver.acme.email=ssl@julweb.dev"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      # Bypass local DNS server
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
     environment:
       - "CF_DNS_API_TOKEN={{ traefik_cf_dns_api_token }}"
     networks:
@@ -34,6 +36,7 @@ services:
       - net-wikijs
       - net-freshrss
       - net-actual-server
+      - net-obsidian-livesync
       - net-komga
       - net-scrutiny
       - net-speedtest-tracker
@@ -108,6 +111,10 @@ networks:
 
   net-wikijs:
     name: wikijs
+    external: true
+
+  net-obsidian-livesync:
+    name: obsidian-livesync
     external: true
 
   net-freshrss:
