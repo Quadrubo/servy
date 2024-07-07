@@ -1,0 +1,23 @@
+services:
+  bitwarden-backup:
+    image: ghcr.io/quadrubo/bitwarden-backup:v0.1.0
+    container_name: bitwarden-backup
+    environment:
+      # Paths
+      - BACKUP_PATH=/backup
+      - BW_BINARY=/usr/local/bin/bw
+      # Authentication
+      - BW_CLIENT_ID={{ vars['bitwarden-backup_client_id'] }}
+      - BW_CLIENT_SECRET={{ vars['bitwarden-backup_client_secret'] }}
+      - BW_MASTER_PASSWORD={{ vars['bitwarden-backup_master_password'] }}
+      # Connection
+      - BW_SERVER=https://vault.bitwarden.com
+      # Backups
+      - BACKUP_FORMAT=encrypted_json
+      - BACKUP_PASSWORD={{ vars['bitwarden-backup_backup_password'] }}
+      # Cron
+      - CRON_SCHEDULE=0 1 * * *
+      # Time
+      - TZ=Europe/Berlin
+    volumes:
+      - /mnt/storage/backups/bitwarden:/backup
