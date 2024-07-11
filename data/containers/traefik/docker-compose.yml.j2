@@ -55,6 +55,7 @@ services:
       - net-arr
       - net-yaade
       - net-jellyseerr
+      - net-dawarich
     ports:
       - "80:80"
       - "443:443"
@@ -195,4 +196,8 @@ networks:
 
   net-jellyseerr:
     name: jellyseerr
+    external: true
+
+  net-dawarich:
+    name: dawarich
     external: true
