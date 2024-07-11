@@ -1,0 +1,99 @@
+services:
+  dawarich-redis:
+    image: redis:7.0-alpine
+    container_name: dawarich-redis
+    command: redis-server
+    volumes:
+      - /mnt/storage/containers/dawarich/shared:/var/shared/redis
+    networks:
+      - net-dawarich
+
+  dawarich-db:
+    image: postgres:14.2-alpine
+    container_name: dawarich-db
+    environment:
+      - POSTGRES_USER=dawarich
+      - POSTGRES_PASSWORD={{ dawarich_postgres_password }}
+    volumes:
+      - /mnt/storage/containers/dawarich-db/data:/var/lib/postgresql/data
+      - /mnt/storage/containers/dawarich/shared:/var/shared
+    networks:
+      - net-dawarich
+
+  dawarich-app:
+    image: freikin/dawarich:latest
+    container_name: dawarich-app
+    environment:
+      - RAILS_ENV=development
+      - REDIS_URL=redis://dawarich-redis:6379/0
+      - DATABASE_HOST=dawarich-db
+      - DATABASE_USERNAME=dawarich
+      - DATABASE_PASSWORD={{ dawarich_postgres_password }}
+      - DATABASE_NAME=dawarich
+      - MIN_MINUTES_SPENT_IN_CITY=60
+      - APPLICATION_HOSTS="dawarich.l.qudr.de,localhost,127.0.0.1"
+      - TIME_ZONE=Europe/Berlin
+      - APPLICATION_PROTOCOL=http
+    volumes:
+      - /mnt/storage/containers/dawarich/gem-cache:/usr/local/bundle/gems
+      - /mnt/storage/containers/dawarich/public:/var/app/public
+    restart: on-failure
+    networks:
+      - net-dawarich
+    ports:
+      - 3000:3000
+    stdin_open: true
+    tty: true
+    entrypoint: dev-entrypoint.sh
+    command: ['bin/dev']
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    depends_on:
+      - dawarich-db
+      - dawarich-redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dawarich.rule=Host(`dawarich.{{ docker_l_hostname }}`)"
+      - "traefik.http.routers.dawarich.entrypoints=websecure"
+      - "traefik.http.routers.dawarich.tls.certresolver=myresolver"
+
+  dawarich-sidekiq:
+    image: freikin/dawarich:latest
+    container_name: dawarich-sidekiq
+    environment:
+      - RAILS_ENV=development
+      - REDIS_URL=redis://dawarich-redis:6379/0
+      - DATABASE_HOST=dawarich-db
+      - DATABASE_USERNAME=dawarich
+      - DATABASE_PASSWORD={{ dawarich_postgres_password }}
+      - DATABASE_NAME=dawarich
+      - APPLICATION_HOST=localhost
+      - APPLICATION_HOSTS=localhost
+      - BACKGROUND_PROCESSING_CONCURRENCY=10
+      - APPLICATION_PROTOCOL=http
+    volumes:
+      - /mnt/storage/containers/dawarich/gem-cache:/usr/local/bundle/gems
+      - /mnt/storage/containers/dawarich/public:/var/app/public
+    networks:
+      - net-dawarich
+    stdin_open: true
+    tty: true
+    entrypoint: dev-entrypoint.sh
+    command: ['sidekiq']
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    depends_on:
+      - dawarich-db
+      - dawarich-redis
+      - dawarich-app
+
+networks:
+  net-dawarich:
+    name: dawarich
